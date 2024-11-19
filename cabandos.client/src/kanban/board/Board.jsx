@@ -20,7 +20,7 @@ class Board extends Component {
     handleMoveForecast = (forecast, toColumnTitle) => {
         var forecastsGroup = this.state.forecastsGroup;
 
-        const indexToDelete = forecastsGroup[forecast.key].findIndex(f => f.date === forecast.date);
+        const indexToDelete = forecastsGroup[forecast.key].findIndex(f => f.id === forecast.id);
         if (indexToDelete !== -1) {
             forecastsGroup[forecast.key].splice(indexToDelete, 1);
         }
