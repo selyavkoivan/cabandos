@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+﻿import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import { getRandomColor, getDarkColor } from '../Color';
 
@@ -51,7 +51,17 @@ class Forecast extends Component {
                             textAlign: 'center',
                         }}
                     >
-                        Temperature: {forecast.temperatureC}�C
+                        Temperature: {forecast.temperatureC}°C
+                    </CardText>
+                    <CardText
+                        className="p-2 mb-2"
+                        style={{
+                            backgroundColor: temperatureColor,
+                            borderRadius: '5px',
+                            textAlign: 'center',
+                        }}
+                    >
+                        Temperature: {forecast.temperatureF}°F
                     </CardText>
                     <CardText
                         className="p-2 mb-2"

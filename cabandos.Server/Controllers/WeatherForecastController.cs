@@ -26,6 +26,13 @@ public class WeatherForecastController : ControllerBase
     [HttpGet("GetWeatherForecast")]
     public IEnumerable<IEnumerable<WeatherForecast>> Get() => _weatherForecasts;
 
+    [HttpGet("LoadNewData")]
+    public IEnumerable<IEnumerable<WeatherForecast>> GetNewData()
+    {
+        _weatherForecasts = GetWeatherForecastsGroup();
+        return _weatherForecasts;
+    }
+
     [HttpPost("EditWeatherForecast")]
     public void Post([FromBody] IEnumerable<IEnumerable<WeatherForecast>> newWeatherForecastsGroup)
     {

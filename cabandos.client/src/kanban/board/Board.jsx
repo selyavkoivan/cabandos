@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Container, Row, Col } from 'reactstrap';
+﻿import React, { Component } from 'react';
+import { Container, Row, Col, Button } from 'reactstrap';
 import BoardColumn from './BoardColumn';
 import { getRandomColor } from '../Color';
 import 'reactstrap'
@@ -39,6 +39,12 @@ class Board extends Component {
       
     };
 
+    handleLoadNewData = () => {
+        fetch('/api/weatherForecast/LoadNewData', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => this.setState({ forecastsGroup: data }));
+    }
+
     render() {
         const { forecastsGroup, randomRowColor } = this.state;
 
@@ -61,6 +67,9 @@ class Board extends Component {
                         </Col>
                     ))}
                 </Row>
+                <Button className='m-2' onClick={this.handleLoadNewData}>
+                    Загрузить новые данные</Button>
+
             </Container>
         );
     }
