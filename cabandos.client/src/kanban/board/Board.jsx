@@ -25,7 +25,6 @@ class Board extends Component {
             forecastsGroup[forecast.key].splice(indexToDelete, 1);
         }
 
-
         forecastsGroup[toColumnTitle].push(forecast);
         this.setState({ forecastsGroup: forecastsGroup })
 
@@ -37,6 +36,29 @@ class Board extends Component {
             },
         });
       
+    };
+
+    handleDeleteForecast = (forecast, columnFromDelete) => {
+        const forecastGroup = [...this.state.forecastsGroup]
+        const forecasts = [...forecastGroup[columnFromDelete]]
+
+        const index = forecasts.findIndex(f => f.id === forecast.id)
+        if (index !== -1) {
+            forecasts.splice(index, 1)
+        }
+        forecastGroup[columnFromDelete] = forecasts
+        this.setState({ forecastsGroup: forecastGroup });
+
+        fetch('/api/weatherForecast/DeleteWeatherForecast', {
+            method: 'POST',
+            body: JSON.stringify({
+                id: forecast.id,
+                columnFrom: columnFromDelete,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
     };
 
     handleLoadNewData = () => {
@@ -62,6 +84,7 @@ class Board extends Component {
                             <BoardColumn
                                 columnNumber={index}
                                 onMoveForecast={this.handleMoveForecast}
+                                onDeleteForecast={this.handleDeleteForecast}
                                 forecasts={forecasts}
                             />
                         </Col>

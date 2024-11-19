@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import { getRandomColor, getDarkColor } from '../Color';
-
+import { AiOutlineClose } from "react-icons/ai";
 class Forecast extends Component {
     constructor(props) {
         super(props);
@@ -23,6 +23,10 @@ class Forecast extends Component {
         event.dataTransfer.setData('text/plain', JSON.stringify(data));
     };
 
+    handleDelete = (event) => {
+        this.props.handleDeleteForecast(this.props.forecast)
+    }
+
     render() {
         const { forecast, color } = this.props;
         const { backgroundColor, temperatureColor, summaryColor } = this.state;
@@ -30,17 +34,27 @@ class Forecast extends Component {
         return (
             <Card key={forecast.date} className="m-1">
                 <CardTitle
-                    className="text-center"
+                    className="d-flex align-items-center justify-content-between"
                     style={{
                         backgroundColor: getDarkColor(color),
                         height: '30px',
                         cursor: 'grab',
+                        padding: '0 10px'
                     }}
                     draggable
                     onDragStart={this.handleDragStart}
                     tag="h5"
                 >
-                    {forecast.date}
+                    <span style={{ flex: 1, textAlign: 'center' }}>{forecast.date}</span>
+                    <AiOutlineClose
+                        style={{
+                            marginLeft: 'auto',
+                            cursor: 'pointer',
+                        }}
+                        onDragStart={e => e.stopPropagation()}
+                        onClick={this.handleDelete} 
+                    />
+                    
                 </CardTitle>
                 <CardBody>
                     <CardText

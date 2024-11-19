@@ -25,6 +25,10 @@ class BoardColumn extends Component {
         event.preventDefault();
     };
 
+    handleDeleteForecast = (forecast) => {
+        this.props.onDeleteForecast(forecast, this.props.columnNumber)
+    }
+
     render() {
         const { forecasts, columnNumber } = this.props;
         const { bgColor } = this.state;
@@ -36,7 +40,7 @@ class BoardColumn extends Component {
                 <CardBody>
                     <CardTitle tag="h1" style={{ textAlign: "center" }}>column #{columnNumber + 1}</CardTitle>
                     {forecasts.map((forecast, index) => (
-                        <Forecast key={index} color={bgColor} columnNumber={columnNumber} forecast={forecast} />
+                        <Forecast key={index} color={bgColor} columnNumber={columnNumber} forecast={forecast} handleDeleteForecast={this.handleDeleteForecast} />
                     ))}
                 </CardBody>
             </Card>
