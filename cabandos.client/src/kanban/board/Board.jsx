@@ -18,19 +18,25 @@ class Board extends Component {
     }
 
     handleMoveForecast = (forecast, toColumnTitle) => {
-        this.setState((prevState) => {
-            const forecastsGroup = prevState.forecastsGroup.map(col => [...col]);
-            forecastsGroup.forEach((column, index) => {
-                const indexToDelete = column.findIndex(f => f.date === forecast.date && forecast.key === index);
-                if (indexToDelete !== -1) {
-                    column.splice(indexToDelete, 1);
-                }
-            });
+        var forecastsGroup = this.state.forecastsGroup;
 
-            forecastsGroup[toColumnTitle].push(forecast);
+        const indexToDelete = forecastsGroup[forecast.key].findIndex(f => f.date === forecast.date);
+        if (indexToDelete !== -1) {
+            forecastsGroup[forecast.key].splice(indexToDelete, 1);
+        }
 
-            return { forecastsGroup };
+
+        forecastsGroup[toColumnTitle].push(forecast);
+        this.setState({ forecastsGroup: forecastsGroup })
+
+        fetch('/api/weatherForecast/EditWeatherForecast', {
+            method: 'POST',
+            body: JSON.stringify(this.state.forecastsGroup),
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
+      
     };
 
     render() {

@@ -2,44 +2,48 @@ using cabandos.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 
-namespace cabandos.Server.Controllers
+namespace cabandos.Server.Controllers;
+
+[ApiController]
+[Route("/api/weatherForecast")]
+public class WeatherForecastController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    private static readonly string[] Summaries =
+    [
+        "Cold", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    ];
+
+    private readonly ILogger<WeatherForecastController> _logger;
+
+    private static IEnumerable<IEnumerable<WeatherForecast>> _weatherForecasts { get; set; }
+
+    public WeatherForecastController(ILogger<WeatherForecastController> logger)
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "3123123", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        _logger = logger;
+        _weatherForecasts ??= GetWeatherForecastsGroup();
+    }
 
-        private readonly ILogger<WeatherForecastController> _logger;
+    [HttpGet("GetWeatherForecast")]
+    public IEnumerable<IEnumerable<WeatherForecast>> Get() => _weatherForecasts;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
-        {
-            _logger = logger;
-        }
-
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<IEnumerable<WeatherForecast>> Get()
-        {
-            var list = new List<IEnumerable<WeatherForecast>>
+    [HttpPost("EditWeatherForecast")]
+    public void Post([FromBody] IEnumerable<IEnumerable<WeatherForecast>> newWeatherForecastsGroup)
     {
-        GetWeatherForecasts(),
-        GetWeatherForecasts(),
-        GetWeatherForecasts()
-    };
-            return list;
-        }
+        _weatherForecasts = newWeatherForecastsGroup;
+        return;
+    }
 
-        private IEnumerable<WeatherForecast> GetWeatherForecasts()
+    private IEnumerable<IEnumerable<WeatherForecast>> GetWeatherForecastsGroup() =>
+    [GetWeatherForecasts(), GetWeatherForecasts(), GetWeatherForecasts()];
+
+    private IEnumerable<WeatherForecast> GetWeatherForecasts()
+    {
+        return Enumerable.Range(1, 2).Select(index => new WeatherForecast
         {
-            return Enumerable.Range(1, 2).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            }).ToArray();
-        }
+            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+            TemperatureC = Random.Shared.Next(-20, 55),
+            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+        }).ToArray();
     }
 }
+

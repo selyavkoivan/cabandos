@@ -16,11 +16,14 @@ class App extends Component {
 
     async populateWeatherData() {
         try {
-            const response = await fetch('weatherforecast');
+            const response = await fetch('/api/weatherForecast/GetWeatherForecast');
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
             const data = await response.json();
-            this.setState({ forecastsGroup: data }); 
+            this.setState({ forecastsGroup: data });
         } catch (error) {
-            console.error("Error fetching weather data:", error);
+            console.error("Error fetching weather data:", error.message);
         }
     }
 
