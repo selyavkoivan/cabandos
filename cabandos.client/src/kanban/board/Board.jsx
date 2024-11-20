@@ -17,16 +17,23 @@ class Board extends Component {
         this.setState({ randomRowColor: randomColor });
     }
 
-    handleMoveForecast = (forecast, toColumnTitle) => {
-        var forecastsGroup = this.state.forecastsGroup;
+    handleMoveForecast = (forecast, toColumnNumber, insertIndex) => {
+        const forecastsGroup = [...this.state.forecastsGroup];
 
         const indexToDelete = forecastsGroup[forecast.key].findIndex(f => f.id === forecast.id);
         if (indexToDelete !== -1) {
             forecastsGroup[forecast.key].splice(indexToDelete, 1);
         }
 
-        forecastsGroup[toColumnTitle].push(forecast);
-        this.setState({ forecastsGroup: forecastsGroup })
+    
+        const targetColumn = forecastsGroup[toColumnNumber];
+        if (insertIndex !== null && insertIndex !== undefined) {
+            targetColumn.splice(insertIndex, 0, forecast); 
+        } else {
+            targetColumn.push(forecast);
+        }
+
+        this.setState({ forecastsGroup });
 
         fetch('/api/weatherForecast/EditWeatherForecast', {
             method: 'POST',
@@ -35,8 +42,8 @@ class Board extends Component {
                 'Content-Type': 'application/json',
             },
         });
-      
     };
+
 
     handleDeleteForecast = (forecast, columnFromDelete) => {
         const forecastGroup = [...this.state.forecastsGroup]

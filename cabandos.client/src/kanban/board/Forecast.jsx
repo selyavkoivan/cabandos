@@ -1,5 +1,5 @@
 ﻿import React, { Component } from 'react';
-import { Card, CardBody, CardTitle, CardText } from 'reactstrap';
+import { Card, CardBody, CardTitle, CardText, Row, Col, Button } from 'reactstrap';
 import { getRandomColor, getDarkColor } from '../Color';
 import { AiOutlineClose } from "react-icons/ai";
 class Forecast extends Component {
@@ -52,41 +52,48 @@ class Forecast extends Component {
                             cursor: 'pointer',
                         }}
                         onDragStart={e => e.stopPropagation()}
-                        onClick={this.handleDelete} 
+                        onClick={this.handleDelete}
                     />
-                    
+
                 </CardTitle>
                 <CardBody>
-                    <CardText
-                        className="p-2 mb-2"
-                        style={{
-                            backgroundColor: temperatureColor,
-                            borderRadius: '5px',
-                            textAlign: 'center',
-                        }}
-                    >
-                        Temperature: {forecast.temperatureC}°C
-                    </CardText>
-                    <CardText
-                        className="p-2 mb-2"
-                        style={{
-                            backgroundColor: temperatureColor,
-                            borderRadius: '5px',
-                            textAlign: 'center',
-                        }}
-                    >
-                        Temperature: {forecast.temperatureF}°F
-                    </CardText>
-                    <CardText
-                        className="p-2 mb-2"
-                        style={{
-                            backgroundColor: summaryColor,
-                            borderRadius: '5px',
-                            textAlign: 'center',
-                        }}
-                    >
-                        Summary: {forecast.summary}
-                    </CardText>
+                    <Row>
+                        <Col xs="1" className="d-flex flex-column justify-content-between">
+                            <Button color="primary" className="w-100 h-50 d-flex align-items-center justify-content-center">
+                                1
+                            </Button>
+                            <Button color="secondary" className="w-100 h-50 d-flex align-items-center justify-content-center">
+                                1
+                            </Button>
+                        </Col>
+
+                        <Col xs="11">
+                            <CardText
+                            className="p-2 mb-2 text-center"
+                            style={{
+                                backgroundColor: temperatureColor
+                            }}
+                        >
+                            Temperature: {forecast.temperatureC}°C
+                        </CardText>
+                            <CardText
+                                className="p-2 mb-2 text-center"
+                                style={{
+                                    backgroundColor: temperatureColor
+                                }}
+                            >
+                                Temperature: {forecast.temperatureF}°F
+                            </CardText>
+                            <CardText
+                                className="p-2 mb-2 text-center"
+                                style={{
+                                    backgroundColor: summaryColor
+                                }}
+                            >
+                                Summary: {forecast.summary}
+                            </CardText>
+                        </Col>
+                    </Row>
                 </CardBody>
             </Card>
         );
