@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Card, CardBody, CardTitle } from 'reactstrap';
+﻿import React, { Component } from 'react';
+import { Card, CardBody, CardTitle, Button } from 'reactstrap';
 import Forecast from './Forecast';
 import { getRandomColor } from '../Color';
 
@@ -40,6 +40,10 @@ class BoardColumn extends Component {
         this.props.onDeleteForecast(forecast, this.props.columnNumber);
     };
 
+    handleAdd = () => {
+        this.props.onAddForecast(this.props.columnNumber)
+    }
+
     render() {
         const { forecasts, columnNumber } = this.props;
         const { bgColor, dragOverIndex } = this.state;
@@ -51,7 +55,8 @@ class BoardColumn extends Component {
                 onDragOver={this.handleDragOver}
             >
                 <CardBody>
-                    <CardTitle tag="h1" style={{ textAlign: 'center' }}>column #{columnNumber + 1}</CardTitle>
+                    <CardTitle className="h1 text-center">column #{columnNumber + 1}</CardTitle>
+                    <Button onClick={this.handleAdd}>+ Добавить</Button>
                     {forecasts.map((forecast, index) => (
                         <div key={index}>
                             <div

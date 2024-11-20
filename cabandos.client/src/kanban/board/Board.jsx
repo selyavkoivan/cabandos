@@ -25,10 +25,10 @@ class Board extends Component {
             forecastsGroup[forecast.key].splice(indexToDelete, 1);
         }
 
-    
+
         const targetColumn = forecastsGroup[toColumnNumber];
         if (insertIndex !== null && insertIndex !== undefined) {
-            targetColumn.splice(insertIndex, 0, forecast); 
+            targetColumn.splice(insertIndex, 0, forecast);
         } else {
             targetColumn.push(forecast);
         }
@@ -74,6 +74,22 @@ class Board extends Component {
             .then(data => this.setState({ forecastsGroup: data }));
     }
 
+    handleAddForecast = (columnIndex) => {
+        fetch("api/weatherForecast/CreateNewForecast",
+            {
+                method: "POST",
+                body: columnIndex
+            }
+        )
+            .then(response => response.json())
+            .then(data => {
+                const forecastGroup = [...this.state.forecastsGroup]
+                const forecastColumn = forecastGroup[columnIndex]
+                forecastColumn.unshift(data)
+                this.setState({ forecastGroup })
+            })
+    }
+
     render() {
         const { forecastsGroup, randomRowColor } = this.state;
 
@@ -92,6 +108,7 @@ class Board extends Component {
                                 columnNumber={index}
                                 onMoveForecast={this.handleMoveForecast}
                                 onDeleteForecast={this.handleDeleteForecast}
+                                onAddForecast={this.handleAddForecast}
                                 forecasts={forecasts}
                             />
                         </Col>
