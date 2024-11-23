@@ -16,7 +16,7 @@ class App extends Component {
 
     async populateWeatherData() {
         try {
-            const response = await fetch('/api/task/GetTasksByStatus');
+                const response = await fetch('/api/task/GetTasksByStatus');
             if (!response.ok) {
                 throw new Error(`Server responded with status: ${response.status}`);
             }
