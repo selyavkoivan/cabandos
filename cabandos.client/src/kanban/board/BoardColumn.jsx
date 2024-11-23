@@ -59,14 +59,17 @@ class BoardColumn extends Component {
                         <Button onClick={this.toggleAdd}>+ Добавить</Button>
                     }
 
-                    {tasks.map((task) => (
-                         
+                    {tasks.length || isAdding ?
+                        tasks.map((task) => (
+
                             <Task key={task.id}
                                 color={bgColor}
                                 task={task}
                                 handleDeleteTask={this.handleDeleteTask}
                             />
-                    ))}
+                        ))
+                        : <p className='text-secondary h2 m-5 p-5'>Записей нет</p>
+                    }
                 </CardBody>
             </Card>
         );
