@@ -1,4 +1,4 @@
-@cabandos.Server_HostAddress = http://localhost:5004
+@cabandos.Server_HostAddress = http://localhost:5160
 
 GET {{cabandos.Server_HostAddress}}/weatherforecast/
 Accept: application/json

@@ -1,6 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, Button } from 'reactstrap';
-import Forecast from './Forecast';
+import Task from './Task';
+import AddTask from './AddTask'
 import { getRandomColor } from '../Color';
 
 class BoardColumn extends Component {
@@ -8,7 +9,7 @@ class BoardColumn extends Component {
         super(props);
         this.state = {
             bgColor: '',
-            dragOverIndex: null,
+            isAdding: false
         };
     }
 
@@ -18,35 +19,32 @@ class BoardColumn extends Component {
     }
 
     handleDrop = (event) => {
-        const forecastData = JSON.parse(event.dataTransfer.getData('text/plain'));
-        const { dragOverIndex } = this.state;
-        this.props.onMoveForecast(forecastData, this.props.columnNumber, dragOverIndex);
-        this.setState({ dragOverIndex: null });
+        const taskData = JSON.parse(event.dataTransfer.getData('text/plain'));
+        this.props.onMoveTask(taskData, this.props.status);
     };
 
     handleDragOver = (event) => {
         event.preventDefault();
     };
 
-    handleDragEnter = (index) => {
-        this.setState({ dragOverIndex: index });
+    handleDeleteTask = (task) => {
+        this.props.onDeleteTask(task)
     };
 
-    handleDragLeave = () => {
-        this.setState({ dragOverIndex: null });
-    };
+    handleAddTask = (task) => {
+        this.toggleAdd()
 
-    handleDeleteForecast = (forecast) => {
-        this.props.onDeleteForecast(forecast, this.props.columnNumber);
-    };
+        task.status = this.props.status
+        this.props.onAddTask(task)
+    }
 
-    handleAdd = () => {
-        this.props.onAddForecast(this.props.columnNumber)
+    toggleAdd = () => {
+        this.setState(prevState => ({ isAdding: !prevState.isAdding }));
     }
 
     render() {
-        const { forecasts, columnNumber } = this.props;
-        const { bgColor, dragOverIndex } = this.state;
+        const { tasks, status } = this.props;
+        const { bgColor, isAdding } = this.state;
 
         return (
             <Card
@@ -54,37 +52,21 @@ class BoardColumn extends Component {
                 onDrop={this.handleDrop}
                 onDragOver={this.handleDragOver}
             >
-                <CardBody>
-                    <CardTitle className="h1 text-center">column #{columnNumber + 1}</CardTitle>
-                    <Button onClick={this.handleAdd}>+ Добавить</Button>
-                    {forecasts.map((forecast, index) => (
-                        <div key={index}>
-                            <div
-                                onDragEnter={() => this.handleDragEnter(index)}
-                                onDragLeave={this.handleDragLeave}
-                                style={{
-                                    height: '20px',
-                                    backgroundColor: dragOverIndex === index ? 'lightgray' : 'transparent',
-                                    margin: '5px 0',
-                                }}
-                            ></div>
-                            <Forecast
+                <CardBody className="m-0 p-0">
+                    <CardTitle className="h1 text-center">column #{status}</CardTitle>
+                    {isAdding ?
+                        <AddTask onAddTask={this.handleAddTask}/> :
+                        <Button onClick={this.toggleAdd}>+ Добавить</Button>
+                    }
+
+                    {tasks.map((task) => (
+                         
+                            <Task key={task.id}
                                 color={bgColor}
-                                columnNumber={columnNumber}
-                                forecast={forecast}
-                                handleDeleteForecast={this.handleDeleteForecast}
+                                task={task}
+                                handleDeleteTask={this.handleDeleteTask}
                             />
-                        </div>
                     ))}
-                    <div
-                        onDragEnter={() => this.handleDragEnter(forecasts.length)}
-                        onDragLeave={this.handleDragLeave}
-                        style={{
-                            height: '20px',
-                            backgroundColor: dragOverIndex === forecasts.length ? 'lightgray' : 'transparent',
-                            margin: '5px 0',
-                        }}
-                    ></div>
                 </CardBody>
             </Card>
         );

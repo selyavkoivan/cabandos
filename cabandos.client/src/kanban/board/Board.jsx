@@ -7,7 +7,7 @@ class Board extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            forecastsGroup: this.props.forecastsGroup,
+            tasksGroup: this.props.tasksGroup,
             randomRowColor: ''
         };
     }
@@ -17,27 +17,23 @@ class Board extends Component {
         this.setState({ randomRowColor: randomColor });
     }
 
-    handleMoveForecast = (forecast, toColumnNumber, insertIndex) => {
-        const forecastsGroup = [...this.state.forecastsGroup];
-
-        const indexToDelete = forecastsGroup[forecast.key].findIndex(f => f.id === forecast.id);
+    handleMoveTask = (task, toStatus) => {
+        const tasksGroup = [...this.state.tasksGroup];
+        const indexToDelete = tasksGroup[task.status].tasks.findIndex(f => f.id === task.id);
         if (indexToDelete !== -1) {
-            forecastsGroup[forecast.key].splice(indexToDelete, 1);
+            tasksGroup[task.status].tasks.splice(indexToDelete, 1);
+            task.status = toStatus
         }
 
 
-        const targetColumn = forecastsGroup[toColumnNumber];
-        if (insertIndex !== null && insertIndex !== undefined) {
-            targetColumn.splice(insertIndex, 0, forecast);
-        } else {
-            targetColumn.push(forecast);
-        }
+        const targetColumn = tasksGroup[toStatus].tasks;
+        targetColumn.push(task);
 
-        this.setState({ forecastsGroup });
+        this.setState({ tasksGroup });
 
-        fetch('/api/weatherForecast/EditWeatherForecast', {
+        fetch('/api/task/EditTaskStatus', {
             method: 'POST',
-            body: JSON.stringify(this.state.forecastsGroup),
+            body: JSON.stringify(task),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -45,53 +41,47 @@ class Board extends Component {
     };
 
 
-    handleDeleteForecast = (forecast, columnFromDelete) => {
-        const forecastGroup = [...this.state.forecastsGroup]
-        const forecasts = [...forecastGroup[columnFromDelete]]
+    handleDeleteTask = (task) => {
+        const tasksGroup = [...this.state.tasksGroup]
+        const tasks = [...tasksGroup[task.status].tasks]
 
-        const index = forecasts.findIndex(f => f.id === forecast.id)
+        const index = tasks.findIndex(f => f.id === task.id)
         if (index !== -1) {
-            forecasts.splice(index, 1)
+            tasks.splice(index, 1)
         }
-        forecastGroup[columnFromDelete] = forecasts
-        this.setState({ forecastsGroup: forecastGroup });
+        tasksGroup[task.status].tasks = tasks
+        this.setState({ tasksGroup });
 
-        fetch('/api/weatherForecast/DeleteWeatherForecast', {
+        fetch('/api/task/DeleteTask', {
             method: 'POST',
-            body: JSON.stringify({
-                id: forecast.id,
-                columnFrom: columnFromDelete,
-            }),
+            body: JSON.stringify(task),
             headers: {
                 'Content-Type': 'application/json',
             },
         });
     };
 
-    handleLoadNewData = () => {
-        fetch('/api/weatherForecast/LoadNewData', { method: 'GET' })
-            .then(response => response.json())
-            .then(data => this.setState({ forecastsGroup: data }));
-    }
-
-    handleAddForecast = (columnIndex) => {
-        fetch("api/weatherForecast/CreateNewForecast",
+    handleAddTask = (taskDTO) => {
+        fetch("api/task/AddTask",
             {
                 method: "POST",
-                body: columnIndex
+                body: JSON.stringify(taskDTO),
+                headers: {
+                    "Content-Type": "application/json"
+                },
             }
         )
             .then(response => response.json())
             .then(data => {
-                const forecastGroup = [...this.state.forecastsGroup]
-                const forecastColumn = forecastGroup[columnIndex]
-                forecastColumn.unshift(data)
-                this.setState({ forecastGroup })
+                const tasksGroup = this.state.tasksGroup
+                const tasks = tasksGroup[data.status].tasks
+                tasks.push(data)
+                this.setState({ tasksGroup })
             })
     }
 
     render() {
-        const { forecastsGroup, randomRowColor } = this.state;
+        const { tasksGroup, randomRowColor } = this.state;
 
         return (
             <Container>
@@ -102,21 +92,18 @@ class Board extends Component {
                         backgroundColor: randomRowColor,
                     }}
                 >
-                    {forecastsGroup.map((forecasts, index) => (
-                        <Col key={index} >
-                            <BoardColumn
-                                columnNumber={index}
-                                onMoveForecast={this.handleMoveForecast}
-                                onDeleteForecast={this.handleDeleteForecast}
-                                onAddForecast={this.handleAddForecast}
-                                forecasts={forecasts}
+                    {tasksGroup.map((tasks) => (
+                        <Col className="m-0 p-0" key={tasks.status} >
+                            <BoardColumn 
+                                status={tasks.status}
+                                onMoveTask={this.handleMoveTask}
+                                onDeleteTask={this.handleDeleteTask}
+                                onAddTask={this.handleAddTask}
+                                tasks={tasks.tasks}
                             />
                         </Col>
                     ))}
                 </Row>
-                <Button className='m-2' onClick={this.handleLoadNewData}>
-                    Загрузить новые данные</Button>
-
             </Container>
         );
     }

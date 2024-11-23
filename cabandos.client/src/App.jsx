@@ -6,7 +6,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            forecastsGroup: [] 
+            tasksByStatus: [] 
         };
     }
 
@@ -16,25 +16,25 @@ class App extends Component {
 
     async populateWeatherData() {
         try {
-            const response = await fetch('/api/weatherForecast/GetWeatherForecast');
+            const response = await fetch('/api/task/GetTasksByStatus');
             if (!response.ok) {
                 throw new Error(`Server responded with status: ${response.status}`);
             }
             const data = await response.json();
-            this.setState({ forecastsGroup: data });
+            this.setState({ tasksByStatus: data });
         } catch (error) {
-            console.error("Error fetching weather data:", error.message);
+            console.error("Error fetching tasks data:", error.message);
         }
     }
 
     render() {
-        const { forecastsGroup } = this.state;
+        const { tasksByStatus } = this.state;
 
         return (
             <div>
                 <h1 id="tableLabel">КАБАНДОС</h1>
-                {Array.isArray(forecastsGroup) && forecastsGroup.length > 0 ?
-                    <Board forecastsGroup={forecastsGroup} />
+                {Array.isArray(tasksByStatus) && tasksByStatus.length > 0 ?
+                    <Board tasksGroup={tasksByStatus} />
                     :
                     <p>Загрузка данных...</p> 
                 }
