@@ -1,4 +1,6 @@
-﻿namespace cabandos.Server.Models.DTO;
+﻿using cabandos.Server.Models;
+
+namespace cabandos.Server.Models.DTO;
 
 public class TaskDTO
 {

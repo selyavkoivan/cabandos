@@ -7,13 +7,13 @@ public class Task
 
     public Task(TaskDTO taskDTO)
     {
-        this.Name = taskDTO.Name;
-        this.Description = taskDTO.Description;
-        this.Status = taskDTO.Status;
+        Name = taskDTO.Name;
+        Description = taskDTO.Description;
+        Status = taskDTO.Status;
     }
 
-    public Guid Id { get;set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; }
     public string? Description { get; set; }
-    public TaskStatus Status { get; set; }   
+    public TaskStatus Status { get; set; }
 }

@@ -1,12 +1,13 @@
-using cabandos.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System;
 using System.Collections;
-
-using cabandos.Server.Models.DTO;
 using Task = cabandos.Server.Models.Task;
 using TaskStatus = cabandos.Server.Models.TaskStatus;
+using MediatR;
+using cabandos.Server.Features.Tasks.Commands;
+using cabandos.Server.Features.Tasks.Queries;
+using cabandos.Server.Models.DTO;
 
 namespace cabandos.Server.Controllers;
 
@@ -15,55 +16,46 @@ namespace cabandos.Server.Controllers;
 public class TaskController : ControllerBase
 {
 
-    private readonly ILogger<TaskController> _logger;
+    private readonly IMediator _mediator;
 
-    private static List<Task> _tasks { get; set; } = [];
-
-    public TaskController(ILogger<TaskController> logger)
+    public TaskController(IMediator mediator)
     {
-        _logger = logger;
+        _mediator = mediator;
     }
 
     [HttpGet("GetTasks")]
-    public List<Task> GetTasks() => _tasks;
-
-    [HttpGet("GetTasksByStatus")]
-    public List<object> GetTasksByStatus()
+    public async Task<IActionResult> GetTasks()
     {
-        var allStatuses = Enum.GetValues(typeof(TaskStatus)).Cast<TaskStatus>();
-
-        var groupedTasks = allStatuses
-            .Select(status => new
-            {
-                Status = status,
-                Tasks = _tasks.Where(t => t.Status == status).ToList()
-            })
-            .OrderBy(group => group.Status)
-            .ToList<object>();
-
-        return groupedTasks;
+        var result = await _mediator.Send(new GetTasksQuery());
+        return Ok(result);
     }
 
+    [HttpGet("GetTasksByStatus")]
+    public async Task<IActionResult> GetTasksByStatus()
+    {
+        var result = await _mediator.Send(new GetTasksByStatusQuery());
+        return Ok(result);
+    }
 
     [HttpPost("AddTask")]
-    public Task AddTask([FromBody] TaskDTO taskDTO)
+    public async Task<IActionResult> AddTask([FromBody] TaskDTO taskDTO)
     {
-        var task = new Task(taskDTO);
-        _tasks.Add(task);
-
-        return task;
+        var result = await _mediator.Send(new AddTaskCommand(taskDTO));
+        return Ok(result);
     }
 
     [HttpPost("DeleteTask")]
-    public void DeleteTask([FromBody] Task task) 
+    public async Task<IActionResult> DeleteTask([FromBody] Task task)
     {
-        _tasks.Remove(_tasks.First(t => t.Id == task.Id)); 
+        await _mediator.Send(new DeleteTaskCommand(task.Id));
+        return NoContent();
     }
 
     [HttpPost("EditTaskStatus")]
-    public void EditTaskStatus([FromBody] Task task)
+    public async Task<IActionResult> EditTaskStatus([FromBody] Task task)
     {
-        _tasks.First(t => t.Id == task.Id).Status = task.Status;
+        await _mediator.Send(new EditStatusCommand(task.Id, task.Status));
+        return NoContent();
     }
 }
 
