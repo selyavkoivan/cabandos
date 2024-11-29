@@ -7,14 +7,25 @@ class Board extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tasksGroup: this.props.tasksGroup,
+            tasksGroup: '',
             randomRowColor: ''
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         const { randomColor } = getRandomColor();
         this.setState({ randomRowColor: randomColor });
+
+        try {
+            const response = await fetch('/api/task/GetTasksByStatus');
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
+            const data = await response.json();
+            this.setState({ tasksGroup: data });
+        } catch (error) {
+            console.error("Error fetching tasks data:", error.message);
+        }
     }
 
     handleMoveTask = (task, toStatus) => {
@@ -85,25 +96,31 @@ class Board extends Component {
 
         return (
             <Container>
-                <Row
-                    className="justify-content-center"
-                    style={{
-                        flexWrap: "wrap",
-                        backgroundColor: randomRowColor,
-                    }}
-                >
-                    {tasksGroup.map((tasks) => (
-                        <Col className="m-0 p-0" key={tasks.status} >
-                            <BoardColumn 
-                                status={tasks.status}
-                                onMoveTask={this.handleMoveTask}
-                                onDeleteTask={this.handleDeleteTask}
-                                onAddTask={this.handleAddTask}
-                                tasks={tasks.tasks}
-                            />
-                        </Col>
-                    ))}
-                </Row>
+                    <h1 id="tableLabel">КАБАНДОС</h1>
+                {Array.isArray(tasksGroup) && tasksGroup.length > 0 ?
+                    <Row
+                        className="justify-content-center"
+                        style={{
+                            flexWrap: "wrap",
+                            backgroundColor: randomRowColor,
+                        }}
+                    >
+                        {tasksGroup.map((tasks) => (
+                            <Col className="m-0 p-0" key={tasks.status} >
+                                <BoardColumn
+                                    status={tasks.status}
+                                    onMoveTask={this.handleMoveTask}
+                                    onDeleteTask={this.handleDeleteTask}
+                                    onAddTask={this.handleAddTask}
+                                    tasks={tasks.tasks}
+                                />
+                            </Col>
+                        ))}
+                    </Row>
+                        :
+                        <p>Загрузка данных...</p>
+                    }
+               
             </Container>
         );
     }

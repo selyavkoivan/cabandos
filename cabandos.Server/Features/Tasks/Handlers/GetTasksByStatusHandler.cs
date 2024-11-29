@@ -1,13 +1,21 @@
 ﻿using cabandos.Server.Data;
 using cabandos.Server.Features.Tasks.Queries;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Task = System.Threading.Tasks.Task;
 
 namespace cabandos.Server.Features.Tasks.Handlers;
 
 public class GetTasksByStatusHandler : IRequestHandler<GetTasksByStatusQuery, List<object>>
 {
-    public Task<List<object>> Handle(GetTasksByStatusQuery request, CancellationToken cancellationToken)
+    private ApplicationContext _context;
+
+    public GetTasksByStatusHandler(ApplicationContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<List<object>> Handle(GetTasksByStatusQuery request, CancellationToken cancellationToken)
     {
         var allStatuses = Enum.GetValues(typeof(Models.TaskStatus)).Cast<Models.TaskStatus>();
 
@@ -15,11 +23,11 @@ public class GetTasksByStatusHandler : IRequestHandler<GetTasksByStatusQuery, Li
             .Select(status => new
             {
                 Status = status,
-                Tasks = DataContext.Tasks.Where(t => t.Status == status).ToList()
+                Tasks = _context.Tasks.Where(t => t.Status == status).ToList()
             })
             .OrderBy(group => group.Status)
             .ToList<object>();
 
-        return Task.FromResult(groupedTasks);
+        return groupedTasks;
     }
 }

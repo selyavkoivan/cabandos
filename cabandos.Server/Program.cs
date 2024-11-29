@@ -1,14 +1,30 @@
+using cabandos.Server.Data;
+using cabandos.Server.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<ApplicationContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<User, IdentityRole>(o =>
+{
+    o.SignIn.RequireConfirmedPhoneNumber = false;
+    o.SignIn.RequireConfirmedEmail = true;
+    o.Lockout.AllowedForNewUsers = true;
+    o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+    o.Lockout.MaxFailedAccessAttempts = 3;
+}).AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 

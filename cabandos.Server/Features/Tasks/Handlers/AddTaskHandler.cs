@@ -8,11 +8,21 @@ namespace cabandos.Server.Features.Tasks.Handlers;
 
 public class AddTaskHandler : IRequestHandler<AddTaskCommand, Models.Task>
 {
-    public Task<Models.Task> Handle(AddTaskCommand request, CancellationToken cancellationToken)
+    private ApplicationContext _context;
+
+    public AddTaskHandler(ApplicationContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<Models.Task> Handle(AddTaskCommand request, CancellationToken cancellationToken)
     {
         var task = new Models.Task(request.TaskDTO);
-        DataContext.Tasks.Add(task);
-        return Task.FromResult(task);
+
+        _context.Tasks.Add(task);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return task;
     }
 }
 

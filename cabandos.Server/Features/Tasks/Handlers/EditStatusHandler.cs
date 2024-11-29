@@ -2,16 +2,27 @@
 using cabandos.Server.Data;
 using cabandos.Server.Features.Tasks.Commands;
 using Task = System.Threading.Tasks.Task;
+using Microsoft.EntityFrameworkCore;
 
 namespace cabandos.Server.Features.Tasks.Handlers;
 
 public class EditStatusHandler : IRequestHandler<EditStatusCommand>
 {
-    public Task Handle(EditStatusCommand request, CancellationToken cancellationToken)
+    private ApplicationContext _context;
+
+    public EditStatusHandler(ApplicationContext context)
     {
-        var task = DataContext.Tasks.First(t => t.Id == request.TaskId);
+        _context = context;
+    }
+
+    public async Task Handle(EditStatusCommand request, CancellationToken cancellationToken)
+    {
+        var task = _context.Tasks.Find(request.TaskId);
+
         task.Status = request.TaskStatus;
 
-        return Task.CompletedTask;
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return;
     }
 }
