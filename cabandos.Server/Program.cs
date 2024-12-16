@@ -1,4 +1,5 @@
 using cabandos.Server.Data;
+using cabandos.Server.Features.Attributes.Filter;
 using cabandos.Server.Middleware;
 using cabandos.Server.Models;
 using Microsoft.AspNetCore.Identity;
@@ -6,8 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<EmailConfirmedFilter>(); 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.AddService<EmailConfirmedFilter>();
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -31,7 +36,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Get
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
-
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
