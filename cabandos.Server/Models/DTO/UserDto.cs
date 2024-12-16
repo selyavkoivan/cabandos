@@ -11,14 +11,7 @@ public class UserDto
     {
         get
         {
-            try
-            {
-                return PasswordField!.Equals(RepeatedPassword) ? PasswordField : null;
-            }
-            catch (NullReferenceException)
-            {
-                return string.Empty;
-            }
+            return PasswordField?.Equals(RepeatedPassword) == true ? PasswordField : null;
         }
         set => PasswordField = value;
     }
