@@ -1,4 +1,4 @@
-import React from 'react'
+ï»¿import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
@@ -7,22 +7,16 @@ class SignIn extends React.Component {
         super(props);
 
         this.state = {}
-
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handlePasswordClick = this.handlePasswordClick.bind(this);
     }
 
-    onUsernameChange(event) {
-        this.setState({ Username: event.target.value });
-    }
+    handleInputChange = (event) => {
+        const { name, value } = event.target;
+        this.setState({ [name]: value });
+    };
 
-    onPasswordChange(event) {
-        this.setState({ Password: event.target.value });
-    }
+    handleSubmit = (event) => {
 
-    handleSubmit(event) {
-
-        fetch('/api/auth/signin', {
+        fetch('/api/user/signin', {
             method: 'POST',
             body: JSON.stringify({
                 Username: this.state.Username,
@@ -41,7 +35,7 @@ class SignIn extends React.Component {
             })
     }
 
-    handlePasswordClick(event) {
+    handlePasswordClick = (event) => {
         this.setState({ showPassword: !this.state.showPassword })
     }
 
@@ -51,18 +45,18 @@ class SignIn extends React.Component {
                 <div className="row justify-content-center align-items-center">
                     <div className="col-6">
                         <div className="m-5 text-center">
-                            <h1>Âõîä</h1>
+                            <h1>Ð’Ñ…Ð¾Ð´</h1>
                         </div>
                         <div className="input-group mb-3">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="username-addon">@</span>
                             </div>
-                            <input required type="text" name="username" id="form3Example3" className="form-control"
-                                placeholder="Èìÿ ïîëüçîâàòåëÿ"
-                                aria-label="Èìÿ ïîëüçîâàòåëÿ"
+                            <input required type="text" name="Username" id="form3Example3" className="form-control"
+                                placeholder="Ð˜Ð¼Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ"
+                                aria-label="Ð˜Ð¼Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ"
                                 aria-describedby="username-addon"
-                                value={this.state.Email}
-                                onChange={e => this.onUsernameChange(e)} />
+                                value={this.state.Username}
+                                onChange={this.handleInputChange} />
                         </div>
 
                         <div className="input-group mb-3">
@@ -74,13 +68,13 @@ class SignIn extends React.Component {
                                     </p>
                                 </span>
                             </div>
-                            <input required type={this.state.showPassword ? 'text' : 'password'}
-                                className="form-control" placeholder="Ïàðîëü" aria-label="Ïàðîëü"
+                            <input name="Password" required type={this.state.showPassword ? 'text' : 'password'}
+                                className="form-control" placeholder="ÐŸÐ°Ñ€Ð¾Ð»ÑŒ" aria-label="ÐŸÐ°Ñ€Ð¾Ð»ÑŒ"
                                 aria-describedby="password-addon" value={this.state.Password}
-                                onChange={e => this.onPasswordChange(e)} />
+                                onChange={this.handleInputChange} />
                         </div>
 
-                        <input type="submit" value="Âõîä" className="btn btn-primary col-12 p-2"
+                        <input type="submit" value="Ð’Ñ…Ð¾Ð´" className="btn btn-primary col-12 p-2"
                             onClick={this.handleSubmit} />
                     </div>
                 </div>
