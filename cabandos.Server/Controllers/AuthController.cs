@@ -1,18 +1,18 @@
-﻿using cabandos.Server.Features.Users.Commands;
-using cabandos.Server.Features.Users.Queries;
+﻿using cabandos.Server.Features.Mediator.Auth;
 using cabandos.Server.Models.DTO;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cabandos.Server.Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserController : ControllerBase
+public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public UserController(IMediator mediator)
+    public AuthController(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -24,6 +24,7 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {

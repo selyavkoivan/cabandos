@@ -1,13 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using System;
-using System.Collections;
 using Task = cabandos.Server.Models.Task;
-using TaskStatus = cabandos.Server.Models.TaskStatus;
 using MediatR;
-using cabandos.Server.Features.Tasks.Commands;
-using cabandos.Server.Features.Tasks.Queries;
 using cabandos.Server.Models.DTO;
+using cabandos.Server.Features.Mediator.Tasks;
 
 namespace cabandos.Server.Controllers;
 
