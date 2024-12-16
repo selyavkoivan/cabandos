@@ -2,7 +2,6 @@
 using cabandos.Server.Features.Tasks.Queries;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Task = System.Threading.Tasks.Task;
 
 namespace cabandos.Server.Features.Tasks.Handlers;
 

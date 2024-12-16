@@ -3,7 +3,6 @@ using cabandos.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -18,7 +17,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 builder.Services.AddIdentity<User, IdentityRole>(o =>
 {
     o.SignIn.RequireConfirmedPhoneNumber = false;
-    o.SignIn.RequireConfirmedEmail = true;
+    o.SignIn.RequireConfirmedEmail = false;
     o.Lockout.AllowedForNewUsers = true;
     o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
     o.Lockout.MaxFailedAccessAttempts = 3;

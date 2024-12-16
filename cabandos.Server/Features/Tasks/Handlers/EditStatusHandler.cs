@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using cabandos.Server.Data;
 using cabandos.Server.Features.Tasks.Commands;
-using Task = System.Threading.Tasks.Task;
-using Microsoft.EntityFrameworkCore;
 
 namespace cabandos.Server.Features.Tasks.Handlers;
 

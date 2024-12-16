@@ -1,8 +1,6 @@
 ﻿using cabandos.Server.Data;
 using cabandos.Server.Features.Tasks.Commands;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Task = System.Threading.Tasks.Task;
 
 namespace cabandos.Server.Features.Tasks.Handlers;
 public class DeleteTaskHandler : IRequestHandler<DeleteTaskCommand>
