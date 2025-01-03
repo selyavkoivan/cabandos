@@ -5,12 +5,15 @@ import { Route, Routes } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
 import Layout from './kanban/Layout'
 import './App.css';
+import store from './redux/store';
+import { Provider } from 'react-redux';
 
 class App extends Component {
     static displayName = App.name;
 
     render() {
         return (
+            <Provider store={store}>
             <Layout>
                 <Routes>
                     {AppRoutes.map((route, index) => {
@@ -18,7 +21,8 @@ class App extends Component {
                         return <Route key={index} {...rest} element={element} />;
                     })}
                 </Routes>
-            </Layout>
+                </Layout>
+            </Provider>
         );
     }
 }

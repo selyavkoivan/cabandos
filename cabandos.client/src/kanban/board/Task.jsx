@@ -20,19 +20,17 @@ class Task extends Component {
     };
 
     handleDelete = (event) => {
-        this.props.handleDeleteTask(this.props.task)
+        this.props.onDeleteTask(this.props.task)
     }
 
     render() {
-        const { task, color } = this.props;
-        const { backgroundColor } = this.state;
+        const { task } = this.props;
 
         return (
             <Card key={task.id} className="m-1">
                 <CardTitle
                     className="d-flex align-items-center justify-content-between"
                     style={{
-                        backgroundColor: getDarkColor(color),
                         height: '30px',
                         cursor: 'grab',
                         padding: '0 10px'
@@ -54,21 +52,12 @@ class Task extends Component {
                 </CardTitle>
                 <CardBody>
                     <Row>
-                        <Col xs="1" className="d-flex flex-column justify-content-between">
-                            <Button color="primary" className="w-100 h-50 d-flex align-items-center justify-content-center">
-                                1
-                            </Button>
-                            <Button color="secondary" className="w-100 h-50 d-flex align-items-center justify-content-center">
-                                1
-                            </Button>
-                        </Col>
-
                         <Col xs="11">
                             <CardText className="p-2 mb-2 text-center">
                                 Name: {task.name}
                             </CardText>
                             <CardText className="p-2 mb-2 text-center card-text">
-                                Description: {task.descripion}
+                                Description: {task.description}
                             </CardText>
                             <CardText className="p-2 mb-2 text-center">
                                 Status: {task.status}

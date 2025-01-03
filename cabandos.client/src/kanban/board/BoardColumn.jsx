@@ -1,79 +1,90 @@
 ﻿import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { deleteTaskAsync, moveTaskAsync, addTaskAsync, toggleAddingTask } from '../../redux/task/tasksSlice';
 import { Card, CardBody, CardTitle, Button } from 'reactstrap';
 import Task from './Task';
-import AddTask from './AddTask'
-import { getRandomColor } from '../Color';
+import AddTask from './AddTask';
 
 class BoardColumn extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            bgColor: '',
             isAdding: false
         };
     }
 
-    componentDidMount() {
-        const { randomColor } = getRandomColor();
-        this.setState({ bgColor: randomColor });
+    handleDeleteTask = (task) => {
+        this.props.onDeleteTask(task);
     }
 
-    handleDrop = (event) => {
-        const taskData = JSON.parse(event.dataTransfer.getData('text/plain'));
-        this.props.onMoveTask(taskData, this.props.status);
+    handleAddTask = (task) => {
+        this.props.onAddTask({ ...task, status: this.props.status }); 
+        this.handleToggleAdd()
+    };
+
+    handleMoveTask = (task, toStatus) => {
+        this.props.onMoveTask({ ...task, status: toStatus }); 
     };
 
     handleDragOver = (event) => {
         event.preventDefault();
     };
 
-    handleDeleteTask = (task) => {
-        this.props.onDeleteTask(task)
+    handleDrop = (event) => {
+        const taskData = JSON.parse(event.dataTransfer.getData('text/plain'));
+        this.props.onMoveTask(taskData, this.props.status);
     };
 
-    handleAddTask = (task) => {
-        this.toggleAdd()
-
-        task.status = this.props.status
-        this.props.onAddTask(task)
-    }
-
-    toggleAdd = () => {
+    handleToggleAdd = () => {
         this.setState(prevState => ({ isAdding: !prevState.isAdding }));
-    }
+    };
 
     render() {
-        const { tasks, status } = this.props;
-        const { bgColor, isAdding } = this.state;
-
+        const { tasks, status, randomRowColor } = this.props;
+        const { isAdding } = this.state
         return (
             <Card
-                style={{ backgroundColor: bgColor, height: '100%' }}
+                style={{ backgroundColor: randomRowColor, height: '100%' }}
                 onDrop={this.handleDrop}
                 onDragOver={this.handleDragOver}
             >
                 <CardBody className="m-0 p-0">
                     <CardTitle className="h1 text-center">column #{status}</CardTitle>
-                    {isAdding ?
-                        <AddTask onAddTask={this.handleAddTask}/> :
-                        <Button onClick={this.toggleAdd}>+ Добавить</Button>
-                    }
+                    {isAdding ? (
+                        <AddTask onAddTask={this.handleAddTask} />
+                    ) : (
+                            <Button onClick={this.handleToggleAdd}>+ Добавить</Button>
+                    )}
 
-                    {tasks.length || isAdding ?
+                    {tasks.length || isAdding ? (
                         tasks.map((task) => (
-
-                            <Task key={task.id}
-                                color={bgColor}
+                            <Task
+                                key={task.id}
+                                color={randomRowColor}
                                 task={task}
-                                handleDeleteTask={this.handleDeleteTask}
+                                onDeleteTask={this.handleDeleteTask}
+                                onMoveTask={this.handleMoveTask}
                             />
                         ))
-                        : <p className='text-secondary h2 m-5 p-5'>Записей нет</p>
-                    }
+                    ) : (
+                        <p className='text-secondary h2 m-5 p-5'>Записей нет</p>
+                    )}
                 </CardBody>
             </Card>
         );
     }
 }
 
-export default BoardColumn;
+const mapStateToProps = (state) => ({
+    randomRowColor: state.tasks.randomRowColor,
+    isAdding: state.tasks.addingTaskStatus,
+});
+
+const mapDispatchToProps = {
+    deleteTaskAsync,  
+    addTaskAsync,    
+    moveTaskAsync,   
+    toggleAddingTask
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BoardColumn);
