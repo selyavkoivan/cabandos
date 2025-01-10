@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { deleteTaskAsync, moveTaskAsync, addTaskAsync, toggleAddingTask } from '../../redux/task/tasksSlice';
+import { deleteTaskAsync, moveTaskAsync, addTaskAsync, toggleAddingTask } from '../../redux/slice/task/tasksSlice';
 import { Card, CardBody, CardTitle, Button } from 'reactstrap';
 import Task from './Task';
 import AddTask from './AddTask';

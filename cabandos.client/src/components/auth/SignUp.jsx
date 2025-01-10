@@ -1,6 +1,8 @@
 ﻿import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { connect } from 'react-redux';
+import { signUpAsync } from '../../redux/slice/auth/authSlice';
 
 class SignUp extends React.Component {
     constructor(props) {
@@ -15,25 +17,11 @@ class SignUp extends React.Component {
     };
 
     handleSubmit = (event) => {
-
-        fetch('/api/user/signup', {
-            method: 'POST',
-            body: JSON.stringify({
-                Email: this.state.Email,
-                Username: this.state.Username,
-                Password: this.state.Password,
-                RepeatedPassword: this.state.RepeatedPassword
-            }),
-            headers: { "Content-Type": "application/json" }
-        }).then((res) => {
-            if (res.status === 200) {
-                window.location.replace('/email');
-            }
-            return res.json()
-        }
-        ).then((result) => {
-            alert(result.error_description)
-            this.setState({ nameError: result.error_description })
+        this.props.signUpAsync({
+            Email: this.state.Email,
+            Username: this.state.Username,
+            Password: this.state.Password,
+            RepeatedPassword: this.state.RepeatedPassword
         })
     }
 
@@ -112,4 +100,13 @@ class SignUp extends React.Component {
     }
 }
 
-export default SignUp;
+const mapStateToProps = (state) => ({
+    status: state.auth.status,
+    error: state.auth.error,
+});
+
+const mapDispatchToProps = {
+    signUpAsync
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

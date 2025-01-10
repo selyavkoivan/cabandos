@@ -1,11 +1,22 @@
 using cabandos.Server.Data;
 using cabandos.Server.Features.Attributes.Filter;
+using cabandos.Server.Features.Configurations;
 using cabandos.Server.Middleware;
 using cabandos.Server.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var emailConfig = builder.Configuration
+    .GetSection("EmailConfiguration")
+    .Get<EmailConfiguration>();
+
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 
 builder.Services.AddScoped<EmailConfirmedFilter>(); 
 

@@ -1,18 +1,10 @@
 ﻿import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, CardText, Row, Col, Button } from 'reactstrap';
-import { getRandomColor, getDarkColor } from '../Color';
 import { AiOutlineClose } from "react-icons/ai";
-import "./Board.css"
+import "../../assets/styles/Board.css"
 class Task extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            backgroundColor: ''
-        };
-    }
-
-    componentDidMount() {
-        this.setState({ backgroundColor: getRandomColor().randomColor });
     }
 
     handleDragStart = (event) => {

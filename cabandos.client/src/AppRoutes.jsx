@@ -1,6 +1,6 @@
-import Board  from "./kanban/board/Board";
-import SignIn  from "./kanban/auth/SignIn"
-import SignUp  from "./kanban/auth/SignUp"
+import Board  from "./components/kanban/Board";
+import SignIn from "./components/auth/SignIn"
+import SignUp from "./components/auth/SignUp"
 
 
 const AppRoutes = [

@@ -1,6 +1,8 @@
 ﻿import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { connect } from 'react-redux';
+import { signInAsync } from '../../redux/slice/auth/authSlice';
 
 class SignIn extends React.Component {
     constructor(props) {
@@ -15,24 +17,8 @@ class SignIn extends React.Component {
     };
 
     handleSubmit = (event) => {
-
-        fetch('/api/user/signin', {
-            method: 'POST',
-            body: JSON.stringify({
-                Username: this.state.Username,
-                SignInPassword: this.state.Password
-            }),
-            headers: { "Content-Type": "application/json" }
-        }).then((res) => {
-            if (res.status === 200) {
-                window.location.replace(`/profile/${this.state.Username}`)
-            }
-            return res.json()
-        })
-            .then((result) => {
-                alert(result.error_description)
-                this.setState({ nameError: result.error_description })
-            })
+        this.props.signInAsync({ Username: this.state.Username, SignInPassword: this.state.Password });
+       
     }
 
     handlePasswordClick = (event) => {
@@ -83,4 +69,13 @@ class SignIn extends React.Component {
     }
 }
 
-export default SignIn;
+const mapStateToProps = (state) => ({
+    status: state.auth.status,
+    error: state.auth.error,
+});
+
+const mapDispatchToProps = {
+    signInAsync
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

@@ -2,7 +2,7 @@
 import { Container, Row, Col } from 'reactstrap';
 import BoardColumn from './BoardColumn';
 import { connect } from 'react-redux';
-import { fetchTasksByStatus, deleteTaskAsync, addTaskAsync, moveTaskAsync } from '../../redux/task/tasksSlice';
+import { fetchTasksByStatus, deleteTaskAsync, addTaskAsync, moveTaskAsync } from '../../redux/slice/task/tasksSlice';
 
 class Board extends Component {
     async componentDidMount() {
