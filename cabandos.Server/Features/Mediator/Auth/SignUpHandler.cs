@@ -1,11 +1,12 @@
-﻿using cabandos.Server.Models;
+﻿using cabandos.Server.Features.Exceptions;
+using cabandos.Server.Models;
 using cabandos.Server.Models.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace cabandos.Server.Features.Mediator.Auth;
 
-public class SignUpHandler : IRequestHandler<SignUpCommand, (bool Succeeded, string Error, string Description)>
+public class SignUpHandler : IRequestHandler<SignUpCommand, IdentityResult>
 {
     private readonly UserManager<User> _userManager;
 
@@ -14,19 +15,19 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, (bool Succeeded, str
         _userManager = userManager;
     }
 
-    public async Task<(bool Succeeded, string Error, string Description)> Handle(SignUpCommand request, CancellationToken cancellationToken)
+    public async Task<IdentityResult> Handle(SignUpCommand request, CancellationToken cancellationToken)
     {
         var user = new User(request.UserDto);
         var result = await _userManager.CreateAsync(user, request.UserDto.Password!);
 
         if (result.Succeeded)
-            return (true, null, null);
+            return result;
 
-        return (false, "SignUpFailed", "Could not create user.");
+        throw new AuthException("SignInFailed", result);
     }
 }
 
-public class SignUpCommand : IRequest<(bool Succeeded, string Error, string Description)>
+public class SignUpCommand : IRequest<IdentityResult>
 {
     public UserDto UserDto { get; }
 

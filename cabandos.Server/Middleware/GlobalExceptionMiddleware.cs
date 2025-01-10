@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using cabandos.Server.Features.Exceptions;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 
 namespace cabandos.Server.Middleware;
 
@@ -18,6 +20,19 @@ public class GlobalExceptionMiddleware
         try
         {
             await _next(httpContext);
+        }
+        catch(AuthException ex)
+        {
+            var problemDetails = new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Authentication Error",
+                Detail = ex.Message,
+                Extensions = { ["error"] = ex.ErrorCode }
+            };
+            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            httpContext.Response.ContentType = "application/json";
+            await httpContext.Response.WriteAsJsonAsync(problemDetails);
         }
         catch (Exception ex)
         {

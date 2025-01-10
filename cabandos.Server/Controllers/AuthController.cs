@@ -1,4 +1,5 @@
-﻿using cabandos.Server.Features.Mediator.Auth;
+﻿using cabandos.Server.Features.Exceptions;
+using cabandos.Server.Features.Mediator.Auth;
 using cabandos.Server.Models.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -35,20 +36,14 @@ public class AuthController : ControllerBase
     [HttpPost("signup")]
     public async Task<IActionResult> SignUp([FromBody] UserDto userDto)
     {
-        var result = await _mediator.Send(new SignUpCommand(userDto));
-        if (result.Succeeded)
-            return Ok();
-
-        return BadRequest(new { error = result.Error, error_description = result.Description });
+        await _mediator.Send(new SignUpCommand(userDto));
+        return Ok();
     }
 
     [HttpPost("signin")]
     public async Task<IActionResult> SignIn([FromBody] UserDto userDto)
     {
-        var result = await _mediator.Send(new SignInCommand(userDto));
-        if (result.Succeeded)
-            return Ok();
-
-        return BadRequest(new { error = result.Error, error_description = result.Description });
+        await _mediator.Send(new SignInCommand(userDto));
+        return Ok();
     }
 }
