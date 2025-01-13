@@ -1,43 +1,43 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Row, Col } from 'reactstrap';
 import BoardColumn from './BoardColumn';
 
-const DynamicBoardColumn = ({ treeNode, handleMoveTask, handleDeleteTask, handleAddTask }) => {
-    if (!treeNode.isLeaf) {
-        return (
-            <Row
-                key={treeNode.status}
-                className="justify-content-center"
-                style={{
-                    flexWrap: 'wrap'
-                }}
-            >
-                {treeNode.tasks.map((node) => (
-                    <DynamicBoardColumn
-                        key={node.status}
-                        treeNode={node}
-                        handleMoveTask={handleMoveTask}
-                        handleDeleteTask={handleDeleteTask}
-                        handleAddTask={handleAddTask}
-                    />
-                ))}
-            </Row>
-        );
-    } else {    
-        return (
-            <Col key={treeNode.status} md={12}>
-                <BoardColumn
-                    onMoveTask={handleMoveTask}
-                    onDeleteTask={handleDeleteTask}
-                    onAddTask={handleAddTask}
-                    status={treeNode.status}
-                    tasks={treeNode.tasks}
-                    title={treeNode.title}
-                    isLeaf={treeNode.isLeaf }
-                />
-            </Col>
-        );
-    }
-};
+class TreeBoardColumn extends Component {
+    renderTreeNode(treeNode) {
+        const { handleMoveTask, handleDeleteTask, handleAddTask } = this.props;
 
-export default DynamicBoardColumn;
+        if (!treeNode.isLeaf) {
+            return (
+                <Row
+                    key={treeNode.status}
+                    className="justify-content-center"
+                    style={{
+                        flexWrap: 'wrap'
+                    }}
+                >
+                    {treeNode.tasks.map((node) => (
+                        this.renderTreeNode(node)
+                    ))}
+                </Row>
+            );
+        } else {
+            return (
+                <Col md={12} key={treeNode.status}>
+                    <BoardColumn
+                        onMoveTask={handleMoveTask}
+                        onDeleteTask={handleDeleteTask}
+                        onAddTask={handleAddTask}
+                        taskItem={treeNode}
+                    />
+                </Col>
+            );
+        }
+    }
+
+    render() {
+        const { treeNode } = this.props;
+        return this.renderTreeNode(treeNode);
+    }
+}
+
+export default TreeBoardColumn;
