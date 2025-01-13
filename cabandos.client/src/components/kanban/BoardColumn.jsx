@@ -18,12 +18,12 @@ class BoardColumn extends Component {
     };
 
     handleAddTask = (task) => {
-        this.props.onAddTask({ ...task, status: this.props.status });
+        this.props.onAddTask({ ...task, status: this.props.status }); 
         this.handleToggleAdd();
     };
 
     handleMoveTask = (task, toStatus) => {
-        this.props.onMoveTask({ ...task, status: toStatus });
+        this.props.onMoveTask({ ...task, status: toStatus }); 
     };
 
     handleDragOver = (event) => {
@@ -40,7 +40,7 @@ class BoardColumn extends Component {
     };
 
     render() {
-        const { tasks, status, randomRowColor } = this.props;
+        const { tasks, status, randomRowColor, title } = this.props;
         const { isAdding } = this.state;
 
         return (
@@ -50,7 +50,7 @@ class BoardColumn extends Component {
                 onDragOver={this.handleDragOver}
             >
                 <CardBody className="m-0 p-0">
-                    <CardTitle className="h1 text-center">Column #{status}</CardTitle>
+                    <CardTitle className="h1 text-center">{title}</CardTitle>
                     {isAdding ? (
                         <AddTask onAddTask={this.handleAddTask} />
                     ) : (
@@ -82,9 +82,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-    deleteTaskAsync,
-    addTaskAsync,
-    moveTaskAsync,
+    deleteTaskAsync,  
+    addTaskAsync,    
+    moveTaskAsync,   
     toggleAddingTask
 };
 
