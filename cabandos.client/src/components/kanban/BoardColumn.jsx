@@ -15,15 +15,15 @@ class BoardColumn extends Component {
 
     handleDeleteTask = (task) => {
         this.props.onDeleteTask(task);
-    }
+    };
 
     handleAddTask = (task) => {
-        this.props.onAddTask({ ...task, status: this.props.status }); 
-        this.handleToggleAdd()
+        this.props.onAddTask({ ...task, status: this.props.status });
+        this.handleToggleAdd();
     };
 
     handleMoveTask = (task, toStatus) => {
-        this.props.onMoveTask({ ...task, status: toStatus }); 
+        this.props.onMoveTask({ ...task, status: toStatus });
     };
 
     handleDragOver = (event) => {
@@ -41,7 +41,8 @@ class BoardColumn extends Component {
 
     render() {
         const { tasks, status, randomRowColor } = this.props;
-        const { isAdding } = this.state
+        const { isAdding } = this.state;
+
         return (
             <Card
                 style={{ backgroundColor: randomRowColor, height: '100%' }}
@@ -49,11 +50,11 @@ class BoardColumn extends Component {
                 onDragOver={this.handleDragOver}
             >
                 <CardBody className="m-0 p-0">
-                    <CardTitle className="h1 text-center">column #{status}</CardTitle>
+                    <CardTitle className="h1 text-center">Column #{status}</CardTitle>
                     {isAdding ? (
                         <AddTask onAddTask={this.handleAddTask} />
                     ) : (
-                            <Button onClick={this.handleToggleAdd}>+ Добавить</Button>
+                        <Button onClick={this.handleToggleAdd}>+ Add</Button>
                     )}
 
                     {tasks.length || isAdding ? (
@@ -67,7 +68,7 @@ class BoardColumn extends Component {
                             />
                         ))
                     ) : (
-                        <p className='text-secondary h2 m-5 p-5'>Записей нет</p>
+                        <p className="text-secondary h2 m-5 p-5">No tasks available</p>
                     )}
                 </CardBody>
             </Card>
@@ -81,9 +82,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-    deleteTaskAsync,  
-    addTaskAsync,    
-    moveTaskAsync,   
+    deleteTaskAsync,
+    addTaskAsync,
+    moveTaskAsync,
     toggleAddingTask
 };
 

@@ -11,7 +11,7 @@ class Board extends Component {
 
     handleDeleteTask = (task) => {
         this.props.deleteTaskAsync(task);
-    }
+    };
 
     handleAddTask = (task) => {
         this.props.addTaskAsync(task);
@@ -26,7 +26,7 @@ class Board extends Component {
 
         return (
             <Container>
-                <h1 id="tableLabel">КАБАНДОС</h1>
+                <h1 id="tableLabel">KABANDOS</h1>
                 {Array.isArray(tasksGroup) && tasksGroup.length > 0 ? (
                     <Row
                         className="justify-content-center"
@@ -47,7 +47,7 @@ class Board extends Component {
                         ))}
                     </Row>
                 ) : (
-                    <p>Загрузка данных...</p>
+                    <p>Loading data...</p>
                 )}
             </Container>
         );
