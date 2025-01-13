@@ -1,67 +1,102 @@
-﻿import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+﻿import React from 'react';
 import { connect } from 'react-redux';
 import { signInAsync } from '../../redux/slice/auth/authSlice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import ValidatedInput from '../shared/ValidatedInput';
 
 class SignIn extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {}
+        this.state = {
+            inputs: {
+                Username: { value: '', error: '' },
+                Password: { value: '', error: '' },
+            },
+            showPassword: false,
+        };
     }
 
-    handleInputChange = (event) => {
-        const { name, value } = event.target;
-        this.setState({ [name]: value });
+    handleInputChange = (name, value, error) => {
+        this.setState((prevState) => ({
+            inputs: {
+                ...prevState.inputs,
+                [name]: { value, error },
+            },
+        }));
+    };
+
+    handlePasswordToggle = () => {
+        this.setState((prevState) => ({ showPassword: !prevState.showPassword }));
+    };
+
+    validateInputs = () => {
+        const { inputs } = this.state;
+        const newInputs = { ...inputs };
+
+        if (!inputs.Username.value.trim()) {
+            newInputs.Username.error = 'Enter your username.';
+        }
+        if (!inputs.Password.value.trim()) {
+            newInputs.Password.error = 'Enter your password.';
+        }
+
+        this.setState({ inputs: newInputs });
+
+        return !Object.values(newInputs).some((input) => input.error);
     };
 
     handleSubmit = (event) => {
-        this.props.signInAsync({ Username: this.state.Username, SignInPassword: this.state.Password });
-       
-    }
+        event.preventDefault();
 
-    handlePasswordClick = (event) => {
-        this.setState({ showPassword: !this.state.showPassword })
-    }
+        if (!this.validateInputs()) {
+            return;
+        }
+
+        const { Username, Password } = this.state.inputs;
+        this.props.signInAsync({
+            Username: Username.value,
+            SignInPassword: Password.value,
+        });
+    };
 
     render() {
+        const { inputs, showPassword } = this.state;
+
         return (
             <div className="container">
                 <div className="row justify-content-center align-items-center">
                     <div className="col-6">
                         <div className="m-5 text-center">
-                            <h1>Вход</h1>
+                            <h1>Sign In</h1>
                         </div>
-                        <div className="input-group mb-3">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text" id="username-addon">@</span>
-                            </div>
-                            <input required type="text" name="Username" id="form3Example3" className="form-control"
-                                placeholder="Имя пользователя"
-                                aria-label="Имя пользователя"
-                                aria-describedby="username-addon"
-                                value={this.state.Username}
-                                onChange={this.handleInputChange} />
-                        </div>
-
-                        <div className="input-group mb-3">
-                            <div className="input-group-prepend">
-                                <span role="button" className="input-group-text" id="password-addon"
-                                    onClick={this.handlePasswordClick}>
-                                    <p className="m-0">
-                                        <FontAwesomeIcon icon={this.state.showPassword ? faEyeSlash : faEye} />
-                                    </p>
-                                </span>
-                            </div>
-                            <input name="Password" required type={this.state.showPassword ? 'text' : 'password'}
-                                className="form-control" placeholder="Пароль" aria-label="Пароль"
-                                aria-describedby="password-addon" value={this.state.Password}
-                                onChange={this.handleInputChange} />
-                        </div>
-
-                        <input type="submit" value="Вход" className="btn btn-primary col-12 p-2"
-                            onClick={this.handleSubmit} />
+                        <form onSubmit={this.handleSubmit}>
+                            <ValidatedInput
+                                type="text"
+                                name="Username"
+                                placeholder="Username"
+                                validate={(value) => (!value.trim() ? 'Enter your username.' : '')}
+                                onChange={this.handleInputChange}
+                                icon={<span>@</span>}
+                            />
+                            <ValidatedInput
+                                type={showPassword ? 'text' : 'password'}
+                                name="Password"
+                                placeholder="Password"
+                                validate={(value) => (!value.trim() ? 'Enter your password.' : '')}
+                                onChange={this.handleInputChange}
+                                icon={
+                                    <FontAwesomeIcon
+                                        icon={showPassword ? faEyeSlash : faEye}
+                                    />
+                                }
+                                onIconClick={this.handlePasswordToggle}
+                            />
+                            <button type="submit" className="btn btn-primary col-12 p-2">
+                                Sign In
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -69,13 +104,8 @@ class SignIn extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => ({
-    status: state.auth.status,
-    error: state.auth.error,
-});
-
 const mapDispatchToProps = {
-    signInAsync
+    signInAsync,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
+export default connect(null, mapDispatchToProps)(SignIn);

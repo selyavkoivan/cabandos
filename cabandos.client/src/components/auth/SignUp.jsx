@@ -1,98 +1,141 @@
-﻿import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faEyeSlash, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+﻿import React from 'react';
 import { connect } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { signUpAsync } from '../../redux/slice/auth/authSlice';
+import ValidatedInput from '../shared/ValidatedInput';
 
 class SignUp extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {}
+        this.state = {
+            inputs: {
+                Username: { value: '', error: '' },
+                Email: { value: '', error: '' },
+                Password: { value: '', error: '' },
+                RepeatedPassword: { value: '', error: '' },
+            },
+            showPassword: false,
+        };
     }
 
-    handleInputChange = (event) => {
-        const { name, value } = event.target;
-        this.setState({ [name]: value });
+    handleInputChange = (name, value, error) => {
+        this.setState((prevState) => ({
+            inputs: {
+                ...prevState.inputs,
+                [name]: { value, error },
+            },
+        }));
+    };
+
+    handlePasswordToggle = () => {
+        this.setState((prevState) => ({ showPassword: !prevState.showPassword }));
+    };
+
+    validateInputs = () => {
+        const { inputs } = this.state;
+        const newInputs = { ...inputs };
+
+        if (!inputs.Username.value.trim()) {
+            newInputs.Username.error = 'Enter your username.';
+        }
+        if (!inputs.Email.value.trim() || !/\S+@\S+\.\S+/.test(inputs.Email.value)) {
+            newInputs.Email.error = 'Enter a valid email address.';
+        }
+        if (!inputs.Password.value.trim()) {
+            newInputs.Password.error = 'Enter your password.';
+        }
+        if (inputs.Password.value !== inputs.RepeatedPassword.value) {
+            newInputs.RepeatedPassword.error = 'Passwords do not match.';
+        }
+
+        this.setState({ inputs: newInputs });
+
+        return !Object.values(newInputs).some((input) => input.error);
     };
 
     handleSubmit = (event) => {
-        this.props.signUpAsync({
-            Email: this.state.Email,
-            Username: this.state.Username,
-            Password: this.state.Password,
-            RepeatedPassword: this.state.RepeatedPassword
-        })
-    }
+        event.preventDefault();
 
-    handlePasswordClick = (event) => {
-        this.setState({ showPassword: !this.state.showPassword })
-    }
+        if (!this.validateInputs()) {
+            return;
+        }
+
+        const { Username, Email, Password, RepeatedPassword } = this.state.inputs;
+        this.props.signUpAsync({
+            Username: Username.value,
+            Email: Email.value,
+            Password: Password.value,
+            RepeatedPassword: RepeatedPassword.value
+        });
+    };
 
     render() {
+        const { inputs, showPassword } = this.state;
+
         return (
             <div className="container">
                 <div className="row justify-content-center align-items-center">
                     <div className="col-6">
                         <div className="m-5 text-center">
-                            <h1>Регистрация</h1>
+                            <h1>Sign Up</h1>
                         </div>
-                        <div className="input-group mb-3">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text" id="username-addon">@</span>
-                            </div>
-                            <input required type="text" name="username" className="form-control"
-                                placeholder="Имя пользователя"
-                                aria-label="Имя пользователя"
-                                aria-describedby="username-addon"
-                                value={this.state.Username} name="Username"
-                                onChange={this.handleInputChange} />
-                        </div>
-                        <div className="mt-3 input-group mb-3">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text" id="">
-                                    <p className="m-0">
-                                        <FontAwesomeIcon icon={faEnvelope} />
-                                    </p>
-                                </span>
-                            </div>
-                            <input required type="email" className="form-control" placeholder="Почта" aria-label="Почта" name="Email"
-                                aria-describedby="email-addon" value={this.state.Email}
-                                onChange={this.handleInputChange} />
-                        </div>
-
-                        <div className="input-group mb-3">
-                            <div className="input-group-prepend">
-                                <span role="button" className="input-group-text" id="password-addon"
-                                    onClick={this.handlePasswordClick}>
-                                    <p className="m-0">
-                                        <FontAwesomeIcon icon={this.state.showPassword ? faEyeSlash : faEye} />
-                                    </p>
-                                </span>
-                            </div>
-                            <input required type={this.state.showPassword ? 'text' : 'password'}
+                        <form onSubmit={this.handleSubmit}>
+                            <ValidatedInput
+                                type="text"
+                                name="Username"
+                                placeholder="Username"
+                                validate={(value) => (!value.trim() ? 'Enter your username.' : '')}
+                                onChange={this.handleInputChange}
+                                icon={<span>@</span>}
+                            />
+                            <ValidatedInput
+                                type="email"
+                                name="Email"
+                                placeholder="Email"
+                                validate={(value) =>
+                                    !value.trim() || !/\S+@\S+\.\S+/.test(value)
+                                        ? 'Enter a valid email address.'
+                                        : ''
+                                }
+                                onChange={this.handleInputChange}
+                                icon={<FontAwesomeIcon icon={faEnvelope} />}
+                            />
+                            <ValidatedInput
+                                type={showPassword ? 'text' : 'password'}
                                 name="Password"
-                                className="form-control" placeholder="Пароль" aria-label="Пароль"
-                                aria-describedby="password-addon" value={this.state.Password}
-                                onChange={this.handleInputChange} />
-                        </div>
-
-                        <div className="input-group mb-3">
-                            <div className="input-group-prepend">
-                                <span role="button" className="input-group-text" id="repeated-password-addon"
-                                    onClick={this.handlePasswordClick}>
-                                    <p className="m-0">
-                                        <FontAwesomeIcon icon={this.state.showPassword ? faEyeSlash : faEye} />
-                                    </p>
-                                </span>
-                            </div>
-                            <input required type={this.state.showPassword ? 'text' : 'password'}
-                                className="form-control" placeholder="Повторите пароль" aria-label="Повторите пароль"
-                                aria-describedby="repeated-password-addon" value={this.state.RepeatedPassword} name="RepeatedPassword"
-                                onChange={this.handleInputChange} />
-                        </div>
-                        <input type="submit" value="Регистрация" className="btn btn-primary col-12 p-2"
-                            onClick={this.handleSubmit} />
+                                placeholder="Password"
+                                validate={(value) => (!value.trim() ? 'Enter your password.' : '')}
+                                onChange={this.handleInputChange}
+                                icon={
+                                    <FontAwesomeIcon
+                                        icon={showPassword ? faEyeSlash : faEye}
+                                    />
+                                }
+                                onIconClick={this.handlePasswordToggle}
+                            />
+                            <ValidatedInput
+                                type={showPassword ? 'text' : 'password'}
+                                name="RepeatedPassword"
+                                placeholder="Repeat Password"
+                                validate={(value) =>
+                                    value !== inputs.Password.value
+                                        ? 'Passwords do not match.'
+                                        : ''
+                                }
+                                onChange={this.handleInputChange}
+                                icon={
+                                    <FontAwesomeIcon
+                                        icon={showPassword ? faEyeSlash : faEye}
+                                    />
+                                }
+                                onIconClick={this.handlePasswordToggle}
+                            />
+                            <button type="submit" className="btn btn-primary col-12 p-2">
+                                Sign Up
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -100,13 +143,8 @@ class SignUp extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => ({
-    status: state.auth.status,
-    error: state.auth.error,
-});
-
 const mapDispatchToProps = {
-    signUpAsync
+    signUpAsync,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
+export default connect(null, mapDispatchToProps)(SignUp);
