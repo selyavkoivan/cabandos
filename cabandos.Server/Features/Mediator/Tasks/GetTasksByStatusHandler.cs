@@ -14,16 +14,53 @@ public class GetTasksByStatusHandler : IRequestHandler<GetTasksByStatusQuery, Li
 
     public async Task<List<object>> Handle(GetTasksByStatusQuery request, CancellationToken cancellationToken)
     {
-        var allStatuses = Enum.GetValues(typeof(Models.TaskStatus)).Cast<Models.TaskStatus>();
+        var tasks = _context.Tasks.ToList();
 
-        var groupedTasks = allStatuses
-            .Select(status => new
+        var groupedTasks = new List<object>
+        {
+            new
             {
-                Status = status,
-                Tasks = _context.Tasks.Where(t => t.Status == status).ToList()
-            })
-            .OrderBy(group => group.Status)
-            .ToList<object>();
+                Status = "0",
+                IsLeaf = false,
+                Tasks = tasks.Where(task => (int)task.Status == 0)
+                .GroupBy(task => task.Status)
+                .Select(subGroup => new
+                    {
+                        Status = subGroup.Key.ToString(),
+                        Tasks = subGroup.ToList(),
+                        IsLeaf = true
+                    })
+                .ToList()
+            },
+            new
+            {
+                Status = "1-10",
+                IsLeaf = false,
+                Tasks = tasks.Where(task => (int)task.Status >= 1 && (int)task.Status <= 10)
+                    .GroupBy(task => task.Status)
+                    .Select(subGroup => new
+                    {
+                        Status = subGroup.Key.ToString(),
+                        Tasks = subGroup.ToList(),
+                        IsLeaf = true
+                    })
+                    .ToList()
+            },
+            new
+            {
+                Status = "11-20",
+                IsLeaf = false,
+                Tasks = tasks.Where(task => (int)task.Status >= 11)
+                    .GroupBy(task => task.Status)
+                    .Select(subGroup => new
+                    {
+                        Status = subGroup.Key.ToString(),
+                        Tasks = subGroup.ToList(),
+                        IsLeaf = true
+                    })
+                    .ToList()
+            }
+        };
 
         return groupedTasks;
     }
