@@ -4,9 +4,19 @@ import BoardColumn from './BoardColumn';
 
 class TreeBoardColumn extends Component {
     renderTreeNode(treeNode) {
-        const { handleMoveTask, handleDeleteTask, handleAddTask } = this.props;
-
-        if (!treeNode.isLeaf) {
+        const { onMoveTask, onDeleteTask, onAddTask } = this.props;
+        if (treeNode.isLeaf) {
+            return (
+                <Col md={12} key={treeNode.status} style={{ height: '100%' }}>
+                    <BoardColumn
+                        onMoveTask={onMoveTask}
+                        onDeleteTask={onDeleteTask}
+                        onAddTask={onAddTask}
+                        tasksItem={treeNode}
+                    />
+                </Col>
+            )
+        } else {
             return (
                 <Row
                     key={treeNode.status}
@@ -15,21 +25,22 @@ class TreeBoardColumn extends Component {
                         flexWrap: 'wrap'
                     }}
                 >
-                    {treeNode.tasks.map((node) => (
-                        this.renderTreeNode(node)
-                    ))}
+                    <h2>{treeNode.status}</h2>
+                    {treeNode.tasks.length != 0 ?
+                        treeNode.tasks.map((node) => (
+                            this.renderTreeNode(node)
+                        ))
+                        :
+                        <Col md={12} key={treeNode.status} style={{ height: '100%' }}>
+                            <BoardColumn
+                                onMoveTask={onMoveTask}
+                                onDeleteTask={onDeleteTask}
+                                onAddTask={onAddTask}
+                                tasksItem={treeNode}
+                            />
+                        </Col>
+                    }
                 </Row>
-            );
-        } else {
-            return (
-                <Col md={12} key={treeNode.status}>
-                    <BoardColumn
-                        onMoveTask={handleMoveTask}
-                        onDeleteTask={handleDeleteTask}
-                        onAddTask={handleAddTask}
-                        taskItem={treeNode}
-                    />
-                </Col>
             );
         }
     }

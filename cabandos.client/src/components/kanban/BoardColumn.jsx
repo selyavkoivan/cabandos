@@ -18,7 +18,7 @@ class BoardColumn extends Component {
     };
 
     handleAddTask = (task) => {
-        this.props.onAddTask({ ...task, status: this.props.status }); 
+        this.props.onAddTask({ ...task, status: this.props.tasksItem.status }); 
         this.handleToggleAdd();
     };
 
@@ -32,7 +32,7 @@ class BoardColumn extends Component {
 
     handleDrop = (event) => {
         const taskData = JSON.parse(event.dataTransfer.getData('text/plain'));
-        this.props.onMoveTask(taskData, this.props.status);
+        this.props.onMoveTask(taskData, this.props.tasksItem.status);
     };
 
     handleToggleAdd = () => {
@@ -40,28 +40,27 @@ class BoardColumn extends Component {
     };
 
     render() {
-        const { tasks, status, randomRowColor, title } = this.props;
+        const { tasksItem } = this.props;
         const { isAdding } = this.state;
 
         return (
             <Card
-                style={{ backgroundColor: randomRowColor, height: '100%' }}
+                style={{ height: '100%' }}
                 onDrop={this.handleDrop}
                 onDragOver={this.handleDragOver}
             >
                 <CardBody className="m-0 p-0">
-                    <CardTitle className="h1 text-center">{title}</CardTitle>
+                    <CardTitle className="h1 text-center">{tasksItem.status}</CardTitle>
                     {isAdding ? (
                         <AddTask onAddTask={this.handleAddTask} />
                     ) : (
                         <Button onClick={this.handleToggleAdd}>+ Add</Button>
                     )}
 
-                    {tasks.length || isAdding ? (
-                        tasks.map((task) => (
+                    {tasksItem.tasks.length || isAdding ? (
+                        tasksItem.tasks.map((task) => (
                             <Task
                                 key={task.id}
-                                color={randomRowColor}
                                 task={task}
                                 onDeleteTask={this.handleDeleteTask}
                                 onMoveTask={this.handleMoveTask}
@@ -77,7 +76,6 @@ class BoardColumn extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    randomRowColor: state.tasks.randomRowColor,
     isAdding: state.tasks.addingTaskStatus,
 });
 
