@@ -14,53 +14,27 @@ public class GetTasksByStatusHandler : IRequestHandler<GetTasksByStatusQuery, Li
 
     public async Task<List<object>> Handle(GetTasksByStatusQuery request, CancellationToken cancellationToken)
     {
+        var allStatuses = Enum.GetValues(typeof(Models.TaskStatus)).Cast<Models.TaskStatus>();
+        var groupedStatuses = allStatuses.GroupBy(status => (int)status == 0 ? 0 : ((int)status - 1) / 10 + 1)
+            .ToDictionary(
+                group => group.Key,
+                group => group.ToArray()
+            );
         var tasks = _context.Tasks.ToList();
 
-        var groupedTasks = new List<object>
+        var groupedTasks = groupedStatuses.Select(statusGroup => new
         {
-            new
+            Status = statusGroup.Key,
+            IsLeaf = false,
+            Tasks = statusGroup.Value.Select(status => new
             {
-                Status = "0",
-                IsLeaf = false,
-                Tasks = tasks.Where(task => (int)task.Status == 0)
-                .GroupBy(task => task.Status)
-                .Select(subGroup => new
-                    {
-                        Status = subGroup.Key.ToString(),
-                        Tasks = subGroup.ToList(),
-                        IsLeaf = true
-                    })
-                .ToList()
-            },
-            new
-            {
-                Status = "1-10",
-                IsLeaf = false,
-                Tasks = tasks.Where(task => (int)task.Status >= 1 && (int)task.Status <= 10)
-                    .GroupBy(task => task.Status)
-                    .Select(subGroup => new
-                    {
-                        Status = subGroup.Key.ToString(),
-                        Tasks = subGroup.ToList(),
-                        IsLeaf = true
-                    })
-                    .ToList()
-            },
-            new
-            {
-                Status = "11-20",
-                IsLeaf = false,
-                Tasks = tasks.Where(task => (int)task.Status >= 11)
-                    .GroupBy(task => task.Status)
-                    .Select(subGroup => new
-                    {
-                        Status = subGroup.Key.ToString(),
-                        Tasks = subGroup.ToList(),
-                        IsLeaf = true
-                    })
-                    .ToList()
-            }
-        };
+                Status = (int)status,
+                Tasks = tasks.Where(t => t.Status == status).ToList(),
+                IsLeaf = true
+            }).OrderBy(group => group.Status)
+            .ToList()
+        }).OrderBy(group => group.Status)
+            .ToList<object>(); ;
 
         return groupedTasks;
     }
