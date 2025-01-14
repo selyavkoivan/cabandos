@@ -1,12 +1,12 @@
 using cabandos.Server.Data;
-using cabandos.Server.Features.Attributes.Filter;
-using cabandos.Server.Features.Configurations;
-using cabandos.Server.Middleware;
-using cabandos.Server.Models;
+using cabandos.Server.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using cabandos.Server.Domain.Entities;
+using cabandos.Server.Features.Auth.Attributes.Filter;
+using cabandos.Server.Features.Auth.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 

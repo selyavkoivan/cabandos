@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Task = cabandos.Server.Models.Task;
+using Task = cabandos.Server.Domain.Entities.Task;
 using MediatR;
-using cabandos.Server.Models.DTO;
-using cabandos.Server.Features.Mediator.Tasks;
+using cabandos.Server.Domain.DTO;
+using cabandos.Server.Features.Tasks.Handlers;
 
 namespace cabandos.Server.Controllers;
 
