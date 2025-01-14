@@ -54,27 +54,29 @@ const tasksSlice = createSlice({
             })
             .addCase(addTaskAsync.fulfilled, (state, action) => {
                 const taskDTO = action.payload;
-                const tasks = state.tasksGroup[taskDTO.status].tasks;
+                const tasks = state.tasksGroup[Math.ceil(taskDTO.status / 10)].tasks.find(t => t.status == taskDTO.status).tasks;
                 tasks.push(taskDTO);
             })
             .addCase(moveTaskAsync.fulfilled, (state, action) => {
                 const taskDTO = action.payload;
                 const task = taskDTO.task
+                const toStatus = taskDTO.toStatus
                 const tasksGroup = [...state.tasksGroup];
 
-                const tasksToDelete = tasksGroup[task.status].tasks;
+                const tasksToDelete = tasksGroup[Math.ceil(task.status / 10)].tasks.find(t => t.status == task.status).tasks;
+
                 const index = tasksToDelete.findIndex(f => f.id === task.id);
                 if (index !== -1) {
                     tasksToDelete.splice(index, 1);
                 }
 
-                const tasksToAdd = tasksGroup[taskDTO.toStatus].tasks;
-                tasksToAdd.push({ ...task, status: taskDTO.toStatus })
+                const tasksToAdd = tasksGroup[Math.ceil(toStatus / 10)].tasks.find(t => t.status == toStatus).tasks;
+                tasksToAdd.push({ ...task, status: toStatus })
             })
             .addCase(deleteTaskAsync.fulfilled, (state, action) => {
                 const task = action.payload;
                 const tasksGroup = [...state.tasksGroup];
-                const tasks = tasksGroup[task.status].tasks;
+                const tasks = tasksGroup[Math.ceil(task.status / 10)].tasks.find(t => t.status == task.status).tasks;
                 const index = tasks.findIndex(f => f.id === task.id);
                 if (index !== -1) {
                     tasks.splice(index, 1);
