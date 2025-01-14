@@ -5,10 +5,13 @@ import {
     NavbarBrand,
     NavbarToggler,
     NavItem,
-    NavLink
+    NavLink,
+    Button
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import '../../assets/styles/NavMenu.css';
+import { isLoginAsync, logoutAsync } from '../../redux/slice/auth/authSlice'
+import { connect } from 'react-redux';
 
 class NavMenu extends Component {
     static displayName = NavMenu.name;
@@ -20,12 +23,12 @@ class NavMenu extends Component {
         this.toggleDropdown = this.toggleDropdown.bind(this);
         this.state = {
             collapsed: true,
-            dropdownOpen: false,
-            isLogin: false,
+            dropdownOpen: false
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        this.props.isLoginAsync();
     }
 
     toggleNavbar() {
@@ -41,6 +44,8 @@ class NavMenu extends Component {
     }
 
     render() {
+        const { isLogin } = this.props
+
         return (
             <header>
                 <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3"
@@ -52,23 +57,47 @@ class NavMenu extends Component {
                     <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
 
 
-                    <div>
-                        <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
-                        <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed}
-                            navbar>
-                            <ul className="navbar-nav flex-grow">
-                                <NavItem>
-                                    <NavLink tag={Link} className="text-dark" to="/signin">Вход</NavLink>
-                                </NavItem>
-                                <NavItem>
-                                    <NavLink tag={Link} className="text-dark" to="/signup">Регистрация</NavLink>
-                                </NavItem>
-                            </ul>
-                        </Collapse>
-                    </div>
+                    {this.props.isLogin ?
+                        <div>
+                            <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
+                            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed}
+                                navbar>
+                                <ul className="navbar-nav flex-grow">
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" onClick={this.props.logoutAsync}>Logout</NavLink>
+                                    </NavItem>
+                                </ul>
+                            </Collapse>
+                        </div>
+                        :
+                        <div>
+                            <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
+                            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed}
+                                navbar>
+                                <ul className="navbar-nav flex-grow">
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/signin">Sign In</NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/signup">Sign Up</NavLink>
+                                    </NavItem>
+                                </ul>
+                            </Collapse>
+                        </div>
+                    }
                 </Navbar>
             </header>
         );
     }
 }
-export default NavMenu;
+
+const mapStateToProps = (state) => ({
+    isLogin: state.auth.isLogin,
+});
+
+const mapDispatchToProps = {
+    isLoginAsync,
+    logoutAsync,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavMenu);

@@ -35,5 +35,21 @@ export const authApi = {
 
         const data = await response.json();
         throw data; 
+    },
+
+    async isLogin() {
+        var data = await fetch('/api/user/isLogin', {
+            method: 'GET',
+            headers: { "Content-Type": "application/json" },
+        }).then(respose => respose.json())
+
+        return data
+    },
+
+    async logout() {
+        await fetch('/api/user/logout', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+        })
     }
 };

@@ -85,6 +85,6 @@ const tasksSlice = createSlice({
     },
 });
 
-export const { setRandomRowColor, toggleAddingTask, setTasksGroup } = tasksSlice.actions;
+export const { setTasksGroup } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

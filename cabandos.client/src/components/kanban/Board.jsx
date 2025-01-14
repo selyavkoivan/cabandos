@@ -6,7 +6,7 @@ import { fetchTasksByStatus, deleteTaskAsync, addTaskAsync, moveTaskAsync } from
 import TreeBoardColumn from './TreeBoardColumn'
 
 class Board extends Component {
-    async componentDidMount() {
+    componentDidMount() {
         this.props.fetchTasksByStatus();
     }
 
@@ -27,7 +27,7 @@ class Board extends Component {
 
         return (
             <Container>
-                <h1 id="tableLabel">KABANDOS</h1>
+                <h1 id="tableLabel">CABANDOS</h1>
                 {Array.isArray(tasksGroup) && tasksGroup.length > 0 ? (
                     <Row
                         className="justify-content-center"
@@ -55,8 +55,7 @@ class Board extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    tasksGroup: state.tasks.tasksGroup,
-    randomRowColor: state.tasks.randomRowColor,
+    tasksGroup: state.tasks.tasksGroup
 });
 
 const mapDispatchToProps = {

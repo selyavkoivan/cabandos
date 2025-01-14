@@ -24,8 +24,23 @@ export const signUpAsync = createAsyncThunk(
     }
 );
 
+export const isLoginAsync = createAsyncThunk(
+    'auth/isLogin',
+    async () => {
+        return await authApi.isLogin();
+    }
+)
 
-const initialState = {};
+export const logoutAsync = createAsyncThunk(
+    'auth/logout',
+    async () => {
+        return await authApi.logout();
+    }
+)
+
+const initialState = {
+    isLogin: JSON.parse(localStorage.getItem('isLogin')) || false,
+};
 
 
 const authSlice = createSlice({
@@ -35,10 +50,16 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(signInAsync.fulfilled, (state, action) => {
+                state.isLogin = true
+                localStorage.setItem('isLogin', true);
+
                 localStorage.setItem('successedMessage', 'Sign in successed');
                 window.location.replace('/');
             })
             .addCase(signInAsync.rejected, (state, action) => {
+                state.isLogin = false
+                localStorage.setItem('isLogin', false);
+
                 NotificationManager.showError(action.payload.detail);
             })
             .addCase(signUpAsync.fulfilled, (state, action) => {
@@ -48,7 +69,15 @@ const authSlice = createSlice({
             .addCase(signUpAsync.rejected, (state, action) => {
                 NotificationManager.showError(action.payload.detail);
             })
-            
+            .addCase(isLoginAsync.fulfilled, (state, action) => {
+                state.isLogin = action.payload
+                localStorage.setItem('isLogin', action.payload);
+            })
+            .addCase(logoutAsync.fulfilled, (state, action) => {
+                state.isLogin = false
+                localStorage.setItem('isLogin', false);
+                NotificationManager.showInfo("Logout successed");
+            })
     },
 });
 

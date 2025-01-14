@@ -23,10 +23,12 @@ class App extends Component {
             this.setState({ serverReady: true });
         }
 
-        const message = localStorage.getItem('successedMessage');
-        if (message) {
-            NotificationManager.showSuccess(message);
-            localStorage.removeItem('successedMessage');
+        {
+            const message = localStorage.getItem('successedMessage');
+            if (message) {
+                NotificationManager.showSuccess(message);
+                localStorage.removeItem('successedMessage');
+            }
         }
     }
 
