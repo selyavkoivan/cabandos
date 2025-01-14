@@ -1,4 +1,4 @@
-﻿using cabandos.Server.Features.Exceptions;
+﻿using cabandos.Server.Features.Auth.Exceptions;
 using cabandos.Server.Domain.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

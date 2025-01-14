@@ -3,8 +3,9 @@ using cabandos.Server.Domain.DTO;
 using MediatR;
 
 namespace cabandos.Server.Features.Tasks.Handlers;
+using Task = Domain.Entities.Task;
 
-public class AddTaskHandler : IRequestHandler<AddTaskCommand, Domain.Entities.Task>
+public class AddTaskHandler : IRequestHandler<AddTaskCommand, Task>
 {
     private ApplicationContext _context;
 
@@ -13,9 +14,9 @@ public class AddTaskHandler : IRequestHandler<AddTaskCommand, Domain.Entities.Ta
         _context = context;
     }
 
-    public async Task<Domain.Entities.Task> Handle(AddTaskCommand request, CancellationToken cancellationToken)
+    public async Task<Task> Handle(AddTaskCommand request, CancellationToken cancellationToken)
     {
-        var task = new Domain.Task(request.TaskDTO);
+        var task = new Task(request.TaskDTO);
 
         _context.Tasks.Add(task);
         await _context.SaveChangesAsync(cancellationToken);
@@ -24,7 +25,7 @@ public class AddTaskHandler : IRequestHandler<AddTaskCommand, Domain.Entities.Ta
     }
 }
 
-public class AddTaskCommand : IRequest<Domain.Entities.Task>
+public class AddTaskCommand : IRequest<Task>
 {
     public TaskDTO TaskDTO { get; }
 
