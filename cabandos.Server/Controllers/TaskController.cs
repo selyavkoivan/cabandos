@@ -35,7 +35,7 @@ public class TaskController : ControllerBase
     [HttpPost("AddTask")]
     public async Task<IActionResult> AddTask([FromBody] TaskDTO taskDTO)
     {
-        var result = await _mediator.Send(new AddTaskCommand(taskDTO));
+        var result = await _mediator.Send(new AddTaskCommand(taskDTO, User));
         return Ok(result);
     }
 

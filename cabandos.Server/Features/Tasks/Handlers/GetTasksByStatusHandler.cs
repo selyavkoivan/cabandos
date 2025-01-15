@@ -1,5 +1,6 @@
 ﻿using cabandos.Server.Data;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace cabandos.Server.Features.Tasks.Handlers;
 
@@ -20,7 +21,7 @@ public class GetTasksByStatusHandler : IRequestHandler<GetTasksByStatusQuery, Li
                 group => group.Key,
                 group => group.ToArray()
             );
-        var tasks = _context.Tasks.ToList();
+        var tasks = _context.Tasks.Include(t => t.User).ToList();
 
         var groupedTasks = groupedStatuses.Select(statusGroup => new
         {
@@ -34,7 +35,7 @@ public class GetTasksByStatusHandler : IRequestHandler<GetTasksByStatusQuery, Li
             }).OrderBy(group => group.Status)
             .ToList()
         }).OrderBy(group => group.Status)
-            .ToList<object>(); ;
+            .ToList<object>();
 
         return groupedTasks;
     }

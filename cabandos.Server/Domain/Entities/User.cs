@@ -19,4 +19,7 @@ public class User : IdentityUser
     {
         UserName = userDto.Username;
     }
+
+
+    public ICollection<Task>? Tasks { get; set; } = new List<Task>();
 }
