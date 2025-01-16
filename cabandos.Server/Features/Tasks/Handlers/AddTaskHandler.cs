@@ -24,7 +24,7 @@ public class AddTaskHandler : IRequestHandler<AddTaskCommand, Task>
         var task = new Task(request.TaskDTO);
         var user = await this._userManager.GetUserAsync(request.User);
 
-        if(user != null)
+        if(user is not null)
         {
             task.User = user;
         }

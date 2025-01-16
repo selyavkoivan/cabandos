@@ -18,7 +18,7 @@ public class GetUserByUsernameWithTasksHandler : IRequestHandler<GetUserByUserna
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == request.Username);
 
-        if (user != null)
+        if (user is not null)
         {
             await _context.Entry(user).Collection(u => u.Tasks).LoadAsync();
         }

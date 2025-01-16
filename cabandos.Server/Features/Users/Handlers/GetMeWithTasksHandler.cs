@@ -22,7 +22,7 @@ public class GetMeWithTasksHandler : IRequestHandler<GetMeWithTasksQuery, User?>
     public async Task<User?> Handle(GetMeWithTasksQuery request, CancellationToken cancellationToken)
     {
         var user = await this._userManager.GetUserAsync(request.User);
-        if (user != null)
+        if (user is not null)
         {
             await _context.Entry(user).Collection(u => u.Tasks).LoadAsync();
         }
