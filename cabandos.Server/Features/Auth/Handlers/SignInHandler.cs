@@ -34,9 +34,9 @@ public class SignInHandler : IRequestHandler<SignInCommand, SignInResult>
 
 public class SignInCommand : IRequest<SignInResult>
 {
-    public UserDto UserDto { get; }
+    public UserDTO UserDto { get; }
 
-    public SignInCommand(UserDto userDto)
+    public SignInCommand(UserDTO userDto)
     {
         UserDto = userDto;
     }

@@ -5,7 +5,7 @@ namespace cabandos.Server.Domain.Entities;
 
 public class User : IdentityUser
 {
-    public User(UserDto userDto)
+    public User(UserDTO userDto)
     {
         UserName = userDto.Username;
         Email = userDto.Email;
@@ -15,7 +15,7 @@ public class User : IdentityUser
     {
     }
 
-    public void UpdateFromDto(UserDto userDto)
+    public void UpdateFromDTO(UserDTO userDto)
     {
         UserName = userDto.Username;
     }

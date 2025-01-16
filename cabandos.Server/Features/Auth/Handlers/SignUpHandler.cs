@@ -29,9 +29,9 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, IdentityResult>
 
 public class SignUpCommand : IRequest<IdentityResult>
 {
-    public UserDto UserDto { get; }
+    public UserDTO UserDto { get; }
 
-    public SignUpCommand(UserDto userDto)
+    public SignUpCommand(UserDTO userDto)
     {
         UserDto = userDto;
     }

@@ -1,6 +1,6 @@
 ﻿namespace cabandos.Server.Domain.DTO;
 
-public class UserDto
+public class UserDTO
 {
     public string? Email { get; set; }
     public string? Username { get; set; }

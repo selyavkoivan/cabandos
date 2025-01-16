@@ -34,14 +34,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signup")]
-    public async Task<IActionResult> SignUp([FromBody] UserDto userDto)
+    public async Task<IActionResult> SignUp([FromBody] UserDTO userDto)
     {
         await _mediator.Send(new SignUpCommand(userDto));
         return Ok();
     }
 
     [HttpPost("signin")]
-    public async Task<IActionResult> SignIn([FromBody] UserDto userDto)
+    public async Task<IActionResult> SignIn([FromBody] UserDTO userDto)
     {
         await _mediator.Send(new SignInCommand(userDto));
         return Ok();
