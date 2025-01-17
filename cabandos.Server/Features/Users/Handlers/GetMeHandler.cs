@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using cabandos.Server.Migrations;
+using cabandos.Server.Domain.DTO;
 
 namespace cabandos.Server.Features.Users.Handlers;
 
@@ -24,12 +25,12 @@ public class GetMeHandler : IRequestHandler<GetMeQuery, object>
         var user = await this._userManager.GetUserAsync(request.User);
         if (user is not null)
         {
-            if (request.IncludeTasks)
+            if (request.SearchUsersOptions.IncludeTasks)
             {
                 await _context.Entry(user).Collection(u => u.Tasks).LoadAsync(cancellationToken);
             }
 
-            if (request.IncludeRoles)
+            if (request.SearchUsersOptions.IncludeRoles)
             {
                 return new
                 {
@@ -54,13 +55,16 @@ public class GetMeHandler : IRequestHandler<GetMeQuery, object>
 public class GetMeQuery : IRequest<object>
 {
     public ClaimsPrincipal User { get; }
-    public bool IncludeRoles { get; }
-    public bool IncludeTasks { get; }
+    public SearchUsersDTO SearchUsersOptions { get; } = new();
 
-    public GetMeQuery(ClaimsPrincipal user, bool includeRoles = false, bool includeTasks = false)
+    public GetMeQuery(ClaimsPrincipal user)
+    {
+        User = user;;
+    }
+
+    public GetMeQuery(ClaimsPrincipal user, SearchUsersDTO searchUsersDTO)
     {
         User = user;
-        IncludeRoles = includeRoles;
-        IncludeTasks = includeTasks;
+        SearchUsersOptions = searchUsersDTO;
     }
 }

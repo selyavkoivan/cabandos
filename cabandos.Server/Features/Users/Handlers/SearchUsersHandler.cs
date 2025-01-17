@@ -1,4 +1,5 @@
 ﻿using cabandos.Server.Data;
+using cabandos.Server.Domain.DTO;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,14 +16,14 @@ public class SearchUsersHandler : IRequestHandler<SearchUsersQuery, List<object>
 
     public async Task<List<object>> Handle(SearchUsersQuery request, CancellationToken cancellationToken)
     {
-        var usersQuery = _context.Users.Where(u => u.UserName.Contains(request.Username)).AsQueryable();
+        var usersQuery = _context.Users.Where(u => u.UserName.Contains(request.SearchUsersOptions.Username)).AsQueryable();
 
-        if (request.IncludeTasks)
+        if (request.SearchUsersOptions.IncludeTasks)
         {
             usersQuery = usersQuery.Include(u => u.Tasks);
         }
 
-        if (request.IncludeRoles)
+        if (request.SearchUsersOptions.IncludeRoles)
         {
             return usersQuery
                 .Select(user => new
@@ -48,15 +49,10 @@ public class SearchUsersHandler : IRequestHandler<SearchUsersQuery, List<object>
 
 public class SearchUsersQuery : IRequest<List<object>>
 {
-    public string Username { get; }
-    public bool IncludeRoles { get; }
-    public bool IncludeTasks { get; }
+    public SearchUsersDTO SearchUsersOptions { get; } = new ();
 
-    public SearchUsersQuery(string username = "", bool includeRoles = false,
-        bool includeTasks = false)
-    {
-        Username = username;
-        IncludeRoles = includeRoles;
-        IncludeTasks = includeTasks;
-    }
+    public SearchUsersQuery() { }
+
+    public SearchUsersQuery(SearchUsersDTO searchUsersDTO) 
+        => SearchUsersOptions = searchUsersDTO;
 }

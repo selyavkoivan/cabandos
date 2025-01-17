@@ -3,6 +3,7 @@ using MediatR;
 using cabandos.Server.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using cabandos.Server.Migrations;
+using cabandos.Server.Domain.DTO;
 
 namespace cabandos.Server.Features.Users.Handlers;
 
@@ -17,16 +18,16 @@ public class GetUserByUsernameHandler : IRequestHandler<GetUserByUsernameQuery, 
 
     public async Task<object> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken)
     {
-        var usersQuery = _context.Users.Where(u => u.UserName == request.Username).AsQueryable();
+        var usersQuery = _context.Users.Where(u => u.UserName == request.SearchUsersOptions.Username).AsQueryable();
 
         if(usersQuery is not null)
         {
-            if (request.IncludeTasks)
+            if (request.SearchUsersOptions.IncludeTasks)
             {
                 usersQuery = usersQuery.Include(u => u.Tasks);
             }
 
-            if (request.IncludeRoles)
+            if (request.SearchUsersOptions.IncludeRoles)
             {
                 return usersQuery
                     .Select(user => new
@@ -55,15 +56,8 @@ public class GetUserByUsernameHandler : IRequestHandler<GetUserByUsernameQuery, 
 
 public class GetUserByUsernameQuery : IRequest<object>
 {
-    public string Username { get; }
-    public bool IncludeRoles { get; }
-    public bool IncludeTasks { get; }
+    public SearchUsersDTO SearchUsersOptions { get; }
 
-    public GetUserByUsernameQuery(string username, bool includeRoles = false, 
-        bool includeTasks = false)
-    {
-        Username = username;
-        IncludeRoles = includeRoles;
-        IncludeTasks = includeTasks;
-    }
+    public GetUserByUsernameQuery(SearchUsersDTO searchUsersDTO) 
+        => SearchUsersOptions = searchUsersDTO;
 }
