@@ -7,7 +7,7 @@ using cabandos.Server.Domain.DTO;
 
 namespace cabandos.Server.Features.Users.Handlers;
 
-public class EditUserPasswordHandler : IRequestHandler<EditUserPasswordQuery>
+public class EditUserPasswordHandler : IRequestHandler<EditUserPasswordCommand>
 {
     private ApplicationContext _context;
     private UserManager<User> _userManager;
@@ -18,7 +18,7 @@ public class EditUserPasswordHandler : IRequestHandler<EditUserPasswordQuery>
         _userManager = userManager;
     }
 
-    public async System.Threading.Tasks.Task Handle(EditUserPasswordQuery request, CancellationToken cancellationToken)
+    public async System.Threading.Tasks.Task Handle(EditUserPasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByNameAsync(request.Username);
         if (user is not null)
@@ -31,12 +31,12 @@ public class EditUserPasswordHandler : IRequestHandler<EditUserPasswordQuery>
     }
 }
 
-public class EditUserPasswordQuery : IRequest
+public class EditUserPasswordCommand : IRequest
 {
     public string Username { get; }
     public UserDTO UserDTO { get; }
 
-    public EditUserPasswordQuery(string username, UserDTO userDTO)
+    public EditUserPasswordCommand(string username, UserDTO userDTO)
     {
         Username = username;
         UserDTO = userDTO;

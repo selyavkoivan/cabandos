@@ -1,13 +1,13 @@
 ﻿using cabandos.Server.Data;
 using MediatR;
 using cabandos.Server.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using cabandos.Server.Domain.DTO;
+using Task = System.Threading.Tasks.Task;
 
 namespace cabandos.Server.Features.Users.Handlers;
 
-public class EditUserHandler : IRequestHandler<EditUserQuery>
+public class EditUserHandler : IRequestHandler<EditUserCommand>
 {
     private ApplicationContext _context;
     private UserManager<User> _userManager;
@@ -18,7 +18,7 @@ public class EditUserHandler : IRequestHandler<EditUserQuery>
         _userManager = userManager;
     }
 
-    public async System.Threading.Tasks.Task Handle(EditUserQuery request, CancellationToken cancellationToken)
+    public async Task Handle(EditUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByNameAsync(request.Username);
         if (user is not null)
@@ -30,12 +30,12 @@ public class EditUserHandler : IRequestHandler<EditUserQuery>
     }
 }
 
-public class EditUserQuery : IRequest
+public class EditUserCommand : IRequest
 {
     public string Username { get; }
     public UserDTO UserDTO { get; }
 
-    public EditUserQuery(string username, UserDTO userDTO)
+    public EditUserCommand(string username, UserDTO userDTO)
     {
         Username = username;
         UserDTO = userDTO;
