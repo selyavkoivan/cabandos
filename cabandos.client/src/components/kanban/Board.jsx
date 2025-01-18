@@ -2,12 +2,12 @@
 import { Container, Row, Col } from 'reactstrap';
 import BoardColumn from './BoardColumn';
 import { connect } from 'react-redux';
-import { fetchTasksByStatus, deleteTaskAsync, addTaskAsync, moveTaskAsync } from '../../redux/slice/task/tasksSlice';
+import { fetchTasksByStatusAsync, deleteTaskAsync, addTaskAsync, moveTaskAsync } from '../../redux/slice/task/taskSlice';
 import TreeBoardColumn from './TreeBoardColumn'
 
 class Board extends Component {
     componentDidMount() {
-        this.props.fetchTasksByStatus();
+        this.props.fetchTasksByStatusAsync();
     }
 
     handleDeleteTask = (task) => {
@@ -55,11 +55,11 @@ class Board extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    tasksGroup: state.tasks.tasksGroup
+    tasksGroup: state.task.tasksGroup
 });
 
 const mapDispatchToProps = {
-    fetchTasksByStatus,
+    fetchTasksByStatusAsync,
     deleteTaskAsync,
     moveTaskAsync,
     addTaskAsync

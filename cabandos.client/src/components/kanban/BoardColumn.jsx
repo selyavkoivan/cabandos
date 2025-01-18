@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { deleteTaskAsync, moveTaskAsync, addTaskAsync } from '../../redux/slice/task/tasksSlice';
+import { deleteTaskAsync, moveTaskAsync, addTaskAsync } from '../../redux/slice/task/taskSlice';
 import { Card, CardBody, CardTitle, Button } from 'reactstrap';
 import Task from './Task';
 import AddTask from './AddTask';
@@ -76,7 +76,7 @@ class BoardColumn extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    isAdding: state.tasks.addingTaskStatus,
+    isAdding: state.task.addingTaskStatus,
 });
 
 const mapDispatchToProps = {

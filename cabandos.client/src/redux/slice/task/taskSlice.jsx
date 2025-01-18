@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { taskApi } from './taskApi'; 
 
 
-export const fetchTasksByStatus = createAsyncThunk(
-    'tasks/fetchTasksByStatus',
+export const fetchTasksByStatusAsync = createAsyncThunk(
+    'task/fetchTasksByStatus',
     async () => {
         const data = await taskApi.fetchTasksByStatus();
         return data; 
@@ -11,7 +11,7 @@ export const fetchTasksByStatus = createAsyncThunk(
 );
 
 export const addTaskAsync = createAsyncThunk(
-    'tasks/addTaskAsync',
+    'task/addTaskAsync',
     async (taskDTO) => {
         const newTask = await taskApi.addTask(taskDTO);
         return newTask;
@@ -19,7 +19,7 @@ export const addTaskAsync = createAsyncThunk(
 );
 
 export const moveTaskAsync = createAsyncThunk(
-    'tasks/moveTaskAsync',
+    'task/moveTaskAsync',
     async (taskDTO) => {
         await taskApi.editTaskStatus({ ...taskDTO.task, status: taskDTO.toStatus });
         return taskDTO;
@@ -28,7 +28,7 @@ export const moveTaskAsync = createAsyncThunk(
 
 
 export const deleteTaskAsync = createAsyncThunk(
-    'tasks/deleteTaskAsync',
+    'task/deleteTaskAsync',
     async (task) => {
         await taskApi.deleteTask(task);
         return task;
@@ -39,8 +39,8 @@ const initialState = {
     tasksGroup: []
 };
 
-const tasksSlice = createSlice({
-    name: 'tasks',
+const taskSlice = createSlice({
+    name: 'task',
     initialState,
     reducers: {
         setTasksGroup: (state, action) => {
@@ -49,7 +49,7 @@ const tasksSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchTasksByStatus.fulfilled, (state, action) => {
+            .addCase(fetchTasksByStatusAsync.fulfilled, (state, action) => {
                 state.tasksGroup = action.payload;
             })
             .addCase(addTaskAsync.fulfilled, (state, action) => {
@@ -85,6 +85,6 @@ const tasksSlice = createSlice({
     },
 });
 
-export const { setTasksGroup } = tasksSlice.actions;
+export const { setTasksGroup } = taskSlice.actions;
 
-export default tasksSlice.reducer;
+export default taskSlice.reducer;
