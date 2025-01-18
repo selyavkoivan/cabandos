@@ -1,6 +1,6 @@
 export const authApi = {
     async signIn(user) {
-        const response = await fetch('/api/user/signin', { 
+        const response = await fetch('/api/auth/signin', { 
             method: 'POST',
             body: JSON.stringify({
                 Username: user.Username,
@@ -18,7 +18,7 @@ export const authApi = {
     },
 
     async signUp(user) {
-        const response = await fetch('/api/user/signup', {
+        const response = await fetch('/api/auth/signup', {
             method: 'POST',
             body: JSON.stringify({
                 Email: user.Email,
@@ -38,7 +38,7 @@ export const authApi = {
     },
 
     async isLogin() {
-        var data = await fetch('/api/user/isLogin', {
+        var data = await fetch('/api/auth/isLogin', {
             method: 'GET',
             headers: { "Content-Type": "application/json" },
         }).then(respose => respose.json())
@@ -47,7 +47,7 @@ export const authApi = {
     },
 
     async logout() {
-        await fetch('/api/user/logout', {
+        await fetch('/api/auth/logout', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
         })

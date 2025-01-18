@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace cabandos.Server.Controllers;
 
 [ApiController]
-[Route("api/user")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
