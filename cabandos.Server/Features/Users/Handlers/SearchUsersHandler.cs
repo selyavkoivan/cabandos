@@ -49,10 +49,10 @@ public class SearchUsersHandler : IRequestHandler<SearchUsersQuery, List<object>
 
 public class SearchUsersQuery : IRequest<List<object>>
 {
-    public SearchUsersDTO SearchUsersOptions { get; } = new ();
+    public SearchUsersDTO SearchUsersOptions { get; } = new();
 
     public SearchUsersQuery() { }
 
-    public SearchUsersQuery(SearchUsersDTO searchUsersDTO) 
+    public SearchUsersQuery(SearchUsersDTO searchUsersDTO)
         => SearchUsersOptions = searchUsersDTO;
 }

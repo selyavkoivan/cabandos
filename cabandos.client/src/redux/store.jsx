@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import tasksReducer from './slice/task/tasksSlice';
+import taskReducer from './slice/task/taskSlice';
 import authReducer from './slice/auth/authSlice';
+import userReducer from './slice/user/userSlice';
 import exceptionHandlingMiddleware from './middleware/exceptionHandlingMiddleware'
 
 const store = configureStore({
     reducer: {
-        tasks: tasksReducer,
+        task: taskReducer,
         auth: authReducer,
+        user: userReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(exceptionHandlingMiddleware),
