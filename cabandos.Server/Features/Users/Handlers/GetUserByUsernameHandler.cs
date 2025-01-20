@@ -18,37 +18,38 @@ public class GetUserByUsernameHandler : IRequestHandler<GetUserByUsernameQuery, 
 
     public async Task<object> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken)
     {
-        var usersQuery = _context.Users.Where(u => u.UserName == request.SearchUsersOptions.Username).AsQueryable();
+        var usersQuery = _context.Users
+    .Where(u => u.UserName == request.SearchUsersOptions.Username)
+    .AsQueryable();
 
-        if(usersQuery is not null)
+        if (usersQuery is not null)
         {
-            if (request.SearchUsersOptions.IncludeTasks)
+
+            if (usersQuery is not null && request.SearchUsersOptions.IncludeTasks)
             {
                 usersQuery = usersQuery.Include(u => u.Tasks);
             }
 
+            var user = await usersQuery.FirstOrDefaultAsync(cancellationToken);
+
             if (request.SearchUsersOptions.IncludeRoles)
             {
-                return usersQuery
-                    .Select(user => new
-                    {
-                        User = user,
-                        Roles = _context.UserRoles
-                            .Where(ur => ur.UserId == user.Id)
-                            .Join(
-                                _context.Roles,
-                                ur => ur.RoleId,
-                                role => role.Id,
-                                (ur, role) => role.Name
-                            )
-                            .ToList()
-                    })
-                    .Cast<object>().FirstOrDefault(cancellationToken);
+                var roles = _context.UserRoles
+                        .Where(ur => ur.UserId == user.Id)
+                        .Join(
+                            _context.Roles,
+                            ur => ur.RoleId,
+                            role => role.Id,
+                            (ur, role) => role.Name
+                        )
+                        .ToList();
+               return new {user, roles };
             }
 
-            return await usersQuery.Cast<object>()
-                .FirstAsync(cancellationToken);
+            return user;
+
         }
+
 
         throw new Exception(); //UserNotFoundException
     }
@@ -58,6 +59,6 @@ public class GetUserByUsernameQuery : IRequest<object>
 {
     public SearchUsersDTO SearchUsersOptions { get; }
 
-    public GetUserByUsernameQuery(SearchUsersDTO searchUsersDTO) 
+    public GetUserByUsernameQuery(SearchUsersDTO searchUsersDTO)
         => SearchUsersOptions = searchUsersDTO;
 }
