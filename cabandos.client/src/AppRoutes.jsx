@@ -2,6 +2,7 @@ import Board  from "./components/kanban/Board";
 import SignIn from "./components/auth/SignIn"
 import SignUp from "./components/auth/SignUp"
 import Users from "./components/user/Users"
+import Profile from "./components/user/Profile"
 
 
 const AppRoutes = [
@@ -24,6 +25,10 @@ const AppRoutes = [
     {
         path: '/users',
         element: <Users />
+    },
+    {
+        path: '/profile/*',
+        element: <Profile />
     },
 ];
 
