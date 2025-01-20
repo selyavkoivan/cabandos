@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col, CardImg, Button } from 'reactstrap';
+import { Container, Row, Col, CardImg, Button, Badge } from 'reactstrap';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Task from '../kanban/Task';
@@ -55,7 +55,7 @@ class Profile extends React.Component {
                                     {userData.user.userName}
                                 </h6>
                                 <hr />
-                                <Button variant="primary" onClick={() => this.setState({ isEdit: true })}>
+                                <Button variant="primary" onClick={this.toggleEdit}>
                                     <FontAwesomeIcon icon={faPenToSquare} /> Edit Profile
                                 </Button>
                             </div>
@@ -68,12 +68,23 @@ class Profile extends React.Component {
                                 <h5 className="mt-2 text-muted">{userData.user.email}</h5>
                                 <hr />
                                 {isEdit ? (
-                                    <div>Edit Profile Component</div> 
+                                    <div>Edit Profile Component</div>
                                 ) : (
                                     <div>
                                         <h4>About</h4>
                                         <p className="profile-description">
-                                                {userData.user.description || 'No description provided.'}
+                                            <b>Description: </b>{userData.user.description || 'No description provided.'}
+                                        </p>
+                                        <p className="profile-description">
+                                            <b>Roles: </b>{userData.roles && userData.roles.length > 0 ? (
+                                                userData.roles.map((role, index) => (
+                                                    <Badge color="secondary" key={index} className="me-2">
+                                                        {role}
+                                                    </Badge>
+                                                ))
+                                            ) : (
+                                                <p>No roles assigned.</p>
+                                            )}
                                         </p>
                                     </div>
                                 )}
