@@ -1,55 +1,70 @@
 export const userApi = {
     async fetchAllUsers() {
-        const response = await fetch('/api/user/all', { method: 'GET' })
+        const response = await fetch('/api/user/all', { method: 'GET' });
         if (!response.ok) {
-            throw new Error('Failed to get all users');
+            throw new Error('Failed to fetch all users');
         }
         return response.json();
     },
 
-    async fetchUsersByUsername(userDTO) {
-        const response = await fetch('/api/users/search', {
+    async searchUsers(searchUserDTO) {
+        const response = await fetch('/api/user/search', {
             method: 'POST',
-            body: JSON.stringify(userDTO),
+            body: JSON.stringify(searchUserDTO),
             headers: {
                 'Content-Type': 'application/json',
             },
         });
 
         if (!response.ok) {
-            throw new Error('Failed to get users by username');
+            throw new Error('Failed to search users');
         }
         return response.json();
     },
 
     async fetchUserByUsername(username) {
-        const response = await fetch('/api/user/profile/' + username, { method: 'GET' });
+        const response = await fetch(`/api/user/profile/${username}`, { method: 'GET' });
 
         if (!response.ok) {
-            throw new Error('Failed to get user by username');
+            throw new Error('Failed to fetch user by username');
         }
         return response.json();
     },
 
-    async fetchMe(userDTO) {
-        const response = await fetch('/api/user/me', {
+    async fetchUser(searchUserDTO) {
+        const response = await fetch('/api/user/profile', {
             method: 'POST',
-            body: JSON.stringify(userDTO),
+            body: JSON.stringify(searchUserDTO),
             headers: {
                 'Content-Type': 'application/json',
             },
         });
 
         if (!response.ok) {
-            throw new Error('Failed to get me');
+            throw new Error('Failed to fetch user');
         }
         return response.json();
     },
 
-    async editUser(userDTO) {
-        const response = await fetch('/api/user/edit/userdata/' + userDTO.username, {
+    async fetchMe(searchUserDTO) {
+        const response = await fetch('/api/user/me', {
             method: 'POST',
-            body: JSON.stringify(userDTO.userDTO),
+            body: JSON.stringify(searchUserDTO),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch current user');
+        }
+        return response.json();
+    },
+
+    async editUser(username, userDTO) {
+        const response = await fetch(`/api/user/edit/userdata/${username}`, {
+            method: 'POST',
+            body: JSON.stringify(userDTO),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -58,13 +73,12 @@ export const userApi = {
         if (!response.ok) {
             throw new Error('Failed to edit user');
         }
-        return;
     },
 
-    async editUserPassword(userDTO) {
-        const response = await fetch('/api/user/edit/password/' + userDTO.username, {
+    async editUserPassword(username, userDTO) {
+        const response = await fetch(`/api/user/edit/password/${username}`, {
             method: 'POST',
-            body: JSON.stringify(userDTO.userDTO),
+            body: JSON.stringify(userDTO),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -73,6 +87,5 @@ export const userApi = {
         if (!response.ok) {
             throw new Error('Failed to edit user password');
         }
-        return;
-    }
+    },
 };
