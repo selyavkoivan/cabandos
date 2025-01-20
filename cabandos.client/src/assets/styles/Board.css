@@ -5,3 +5,86 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.card {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background-color: #ffffff;
+}
+
+.card .hoverable:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 10px;
+    color: #333333;
+}
+
+.card-text {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #555555;
+}
+
+.card-text.name {
+    font-weight: bold;
+    color: #222222;
+}
+
+.card-title .ai-outline-close {
+    color: #ff5252;
+    font-size: 18px;
+    transition: color 0.2s ease-in-out;
+}
+
+.card-title .ai-outline-close:hover {
+    color: #ff1744;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.m-1 {
+    margin: 10px;
+}
+
+.status {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    color: #fff;
+    text-align: center;
+    width: 100px;
+    margin: 0 auto;
+}
+
+.status.status-0 {
+    background-color: #f7c948;
+    color: #4a4a4a;
+}
+
+.status.status-1 {
+    background-color: #5bc0de;
+}
+
+.status.status-11 {
+    background-color: #3e8e41;
+}
+
+.status.status-20 {
+    background-color: #8b0000;
+}
+
+.status {
+    background-color: #495057;
+}
