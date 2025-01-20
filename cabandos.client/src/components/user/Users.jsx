@@ -5,7 +5,7 @@ import { Badge } from 'reactstrap';
 
 class Users extends Component {
     componentDidMount() {
-        this.props.fetchAllUsers();
+        this.props.fetchAllUsersAsync();
     }
 
     render() {
@@ -72,8 +72,8 @@ const mapStateToProps = (state) => ({
     error: state.user.error,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-    fetchAllUsers: () => dispatch(fetchAllUsersAsync()),
-});
+const mapDispatchToProps = {
+    fetchAllUsersAsync,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Users);

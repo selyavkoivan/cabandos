@@ -22,14 +22,8 @@ export const userApi = {
         return response.json();
     },
 
-    async fetchUserByUsername(userDTO) {
-        const response = await fetch('/api/user/search', {
-            method: 'POST',
-            body: JSON.stringify(userDTO),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+    async fetchUserByUsername(username) {
+        const response = await fetch('/api/user/profile/' + username, { method: 'GET' });
 
         if (!response.ok) {
             throw new Error('Failed to get user by username');

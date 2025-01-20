@@ -2,22 +2,22 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { userApi } from './userApi';
 
 export const fetchAllUsersAsync = createAsyncThunk(
-    'user/fetchAllUsersAsync',
+    'user/fetchAllUsers',
     async () => {
         const data = await userApi.fetchAllUsers();
         return data;
     }
 );
 
-export const fetchUsersByUsername = createAsyncThunk(
+export const fetchUsersByUsernameAsync = createAsyncThunk(
     'user/fetchUsersByUsername',
     async (username) => {
         const data = await userApi.fetchUsersByUsername(username);
         return data;
     }
-);g
+);
 
-export const fetchUserByUsername = createAsyncThunk(
+export const fetchUserByUsernameAsync = createAsyncThunk(
     'user/fetchUserByUsername',
     async (username) => {
         const data = await userApi.fetchUserByUsername(username);
@@ -25,7 +25,7 @@ export const fetchUserByUsername = createAsyncThunk(
     }
 );
 
-export const fetchMe = createAsyncThunk(
+export const fetchMeAsync = createAsyncThunk(
     'user/fetchMe',
     async () => {
         const data = await userApi.fetchMe();
@@ -33,14 +33,14 @@ export const fetchMe = createAsyncThunk(
     }
 );
 
-export const editUser = createAsyncThunk(
+export const editUserAsync = createAsyncThunk(
     'user/editUser',
     async (userDTO) => {
         await userApi.editUser(userDTO);
     }
 );
 
-export const editUserPassword = createAsyncThunk(
+export const editUserPasswordAsync = createAsyncThunk(
     'user/editUserPassword',
     async (passwordDTO) => {
         await userApi.editUserPassword(passwordDTO);
@@ -72,61 +72,61 @@ const userSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             })
-            .addCase(fetchUsersByUsername.pending, (state) => {
+            .addCase(fetchUsersByUsernameAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchUsersByUsername.fulfilled, (state, action) => {
+            .addCase(fetchUsersByUsernameAsync.fulfilled, (state, action) => {
                 state.loading = false;
                 state.users = action.payload;
             })
-            .addCase(fetchUsersByUsername.rejected, (state, action) => {
+            .addCase(fetchUsersByUsernameAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             })
-            .addCase(fetchUserByUsername.pending, (state) => {
+            .addCase(fetchUserByUsernameAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchUserByUsername.fulfilled, (state, action) => {
+            .addCase(fetchUserByUsernameAsync.fulfilled, (state, action) => {
                 state.loading = false;
                 state.currentUser = action.payload;
             })
-            .addCase(fetchUserByUsername.rejected, (state, action) => {
+            .addCase(fetchUserByUsernameAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             })
-            .addCase(fetchMe.pending, (state) => {
+            .addCase(fetchMeAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchMe.fulfilled, (state, action) => {
+            .addCase(fetchMeAsync.fulfilled, (state, action) => {
                 state.loading = false;
                 state.currentUser = action.payload;
             })
-            .addCase(fetchMe.rejected, (state, action) => {
+            .addCase(fetchMeAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             })
-            .addCase(editUser.pending, (state) => {
+            .addCase(editUserAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(editUser.fulfilled, (state) => {
+            .addCase(editUserAsync.fulfilled, (state) => {
                 state.loading = false;
             })
-            .addCase(editUser.rejected, (state, action) => {
+            .addCase(editUserAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             })
-            .addCase(editUserPassword.pending, (state) => {
+            .addCase(editUserPasswordAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(editUserPassword.fulfilled, (state) => {
+            .addCase(editUserPasswordAsync.fulfilled, (state) => {
                 state.loading = false;
             })
-            .addCase(editUserPassword.rejected, (state, action) => {
+            .addCase(editUserPasswordAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             });
