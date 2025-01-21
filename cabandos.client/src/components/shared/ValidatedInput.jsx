@@ -10,6 +10,12 @@ class ValidatedInput extends React.Component {
         };
     }
 
+    componentDidMount() {
+        this.setState({
+            value: this.props.value ? this.props.value : ''
+        });
+    }
+
     handleChange = (event) => {
         const { value } = event.target;
         const { name, onChange, validate } = this.props;
