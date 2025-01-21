@@ -1,4 +1,5 @@
 ﻿using cabandos.Server.Domain.DTO;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace cabandos.Server.Domain.Entities;
@@ -14,7 +15,11 @@ public class Task
     }
 
     public Guid Id { get; set; } = Guid.NewGuid();
+
+    [StringLength(30, ErrorMessage = "Task name cannot exceed 30 characters.")]
     public string Name { get; set; }
+
+    [StringLength(100, ErrorMessage = "Task description cannot exceed 100 characters.")]
     public string? Description { get; set; }
     public TaskStatus Status { get; set; }
 
