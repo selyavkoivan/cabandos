@@ -92,7 +92,7 @@ class SignUp extends React.Component {
                                 icon={<span>@</span>}
                             />
                             <ValidatedInput
-                                maxLength={30}
+                                maxLength={50}
                                 type="email"
                                 name="Email"
                                 placeholder="Email"

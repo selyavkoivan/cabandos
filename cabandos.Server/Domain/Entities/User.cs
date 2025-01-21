@@ -10,7 +10,7 @@ public class User : IdentityUser
     public override string UserName { get; set; }
 
     
-    [StringLength(50, ErrorMessage = "Email cannot exceed 30 characters.")]
+    [StringLength(50, ErrorMessage = "Email cannot exceed 50 characters.")]
     public override string Email { get; set; }
 
     public User(UserDTO userDto)
