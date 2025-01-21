@@ -64,6 +64,9 @@ class NavMenu extends Component {
                                 navbar>
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/users">Users</NavLink>
+                                    </NavItem>
+                                    <NavItem>
                                         <NavLink tag={Link} className="text-dark" onClick={this.props.logoutAsync}>Logout</NavLink>
                                     </NavItem>
                                 </ul>
