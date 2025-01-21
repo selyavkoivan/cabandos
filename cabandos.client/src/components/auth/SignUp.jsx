@@ -83,6 +83,7 @@ class SignUp extends React.Component {
                         </div>
                         <form onSubmit={this.handleSubmit}>
                             <ValidatedInput
+                                maxLength={20}
                                 type="text"
                                 name="Username"
                                 placeholder="Username"
@@ -91,6 +92,7 @@ class SignUp extends React.Component {
                                 icon={<span>@</span>}
                             />
                             <ValidatedInput
+                                maxLength={30}
                                 type="email"
                                 name="Email"
                                 placeholder="Email"

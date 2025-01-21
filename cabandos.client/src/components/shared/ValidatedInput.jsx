@@ -18,10 +18,15 @@ class ValidatedInput extends React.Component {
 
     handleChange = (event) => {
         const { value } = event.target;
-        const { name, onChange, validate } = this.props;
+        const { name, onChange, validate, maxLength = 20 } = this.props;
 
         let error = '';
-        if (validate) {
+
+        if (value.length > maxLength) {
+            error = `Maximum length of ${maxLength} characters exceeded.`;
+        }
+
+        if (validate && !error) {
             error = validate(value);
         }
 
@@ -32,7 +37,7 @@ class ValidatedInput extends React.Component {
     };
 
     render() {
-        const { type, placeholder, name, icon, onIconClick, iconPosition = 'left' } = this.props;
+        const { type, placeholder, name, icon, onIconClick, iconPosition = 'left', maxLength = 20 } = this.props;
         const { value, error } = this.state;
 
         return (
@@ -55,6 +60,7 @@ class ValidatedInput extends React.Component {
                     placeholder={placeholder}
                     value={value}
                     onChange={this.handleChange}
+                    maxLength={maxLength}
                 />
                 {icon && iconPosition === 'right' && (
                     <div className="input-group-append">

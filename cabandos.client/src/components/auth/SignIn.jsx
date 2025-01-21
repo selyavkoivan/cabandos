@@ -73,6 +73,7 @@ class SignIn extends React.Component {
                         </div>
                         <form onSubmit={this.handleSubmit}>
                             <ValidatedInput
+                                maxLength={20}
                                 type="text"
                                 name="Username"
                                 placeholder="Username"
