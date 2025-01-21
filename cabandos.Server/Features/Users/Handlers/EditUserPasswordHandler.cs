@@ -25,7 +25,7 @@ public class EditUserPasswordHandler : IRequestHandler<EditUserPasswordCommand>
         {
             var result = await _userManager.ChangePasswordAsync(user, request.UserDTO.SignInPassword!, request.UserDTO.Password!);
             if (result.Succeeded) return;
-            else throw new Exception(); // UserOperationException
+            else throw new Exception(result.Errors.First().Description); // UserOperationException
         }
         return;
     }

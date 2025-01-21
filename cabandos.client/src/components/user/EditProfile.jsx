@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloudUpload } from "@fortawesome/free-solid-svg-icons";
 import { editUserAsync, fetchUserByUsernameAsync } from '../../redux/slice/user/userSlice';
 import ValidatedInput from '../shared/ValidatedInput';
+import EditPassword from './EditPassword'
 
 class EditProfile extends React.Component {
     constructor(props) {
@@ -27,11 +28,11 @@ class EditProfile extends React.Component {
     };
 
     handleEmailEdit = () => {
-        this.setState({ editEmail: true });
+       
     };
 
-    handlePasswordEdit = () => {
-        this.setState({ editPassword: true });
+    toggleEditPassword = () => {
+        this.setState((prevState) => ({ editPassword: !prevState.editPassword }));
     };
 
     validateInputs = () => {
@@ -80,7 +81,7 @@ class EditProfile extends React.Component {
                 {editEmail ? (
                     <EditEmail toggleEditEmail={this.toggleEditEmail} toggleEdit={this.props.toggleEdit} />
                 ) : editPassword ? (
-                    <EditPassword toggleEditPassword={this.toggleEditPassword} toggleEdit={this.props.toggleEdit} />
+                    <EditPassword toggleEditPassword={this.toggleEditPassword} toggleEdit={this.props.toggleEditPassword} />
                 ) : (   
                     <div className="p-2">
                         <h2 className="mb-3">Edit user data</h2>
@@ -114,8 +115,8 @@ class EditProfile extends React.Component {
 
                         <div className="d-flex justify-content-end mt-3">
                             <button className="btn btn-primary me-2" onClick={this.handleEdit}>Save</button>
-                            <button className="btn btn-secondary me-2" onClick={this.handleEmailEdit}>Edit email</button>
-                            <button className="btn btn-secondary me-2" onClick={this.handlePasswordEdit}>Edit password</button>
+                                    <button className="btn btn-secondary me-2" onClick={this.handleEmailEdit}>Edit email</button>
+                                    <button className="btn btn-secondary me-2" onClick={this.toggleEditPassword}>Edit password</button>
                             <button className="btn btn-outline-danger" onClick={this.handleCancel}>Cancel</button>
                         </div>
                     </div>

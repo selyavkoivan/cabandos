@@ -49,7 +49,7 @@ export const editUserPasswordAsync = createAsyncThunk(
     'user/editUserPassword',
     async (passwordDTO, { rejectWithValue }) => {
         try {
-            return await userApi.editUserPassword(passwordDTO);
+            return await userApi.editUserPassword(passwordDTO.username, passwordDTO.passwordDTO);
         } catch (error) {
             return rejectWithValue(error);
         }
@@ -134,10 +134,11 @@ const userSlice = createSlice({
             })
             .addCase(editUserPasswordAsync.fulfilled, (state) => {
                 state.loading = false;
+                NotificationManager.showSuccess('Password updated successfully');
             })
             .addCase(editUserPasswordAsync.rejected, (state, action) => {
                 state.loading = false;
-                NotificationManager.showError(action.payload.detail);
+                NotificationManager.showError(action.payload.error_description);
             });
     },
 });
