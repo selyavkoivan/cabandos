@@ -51,11 +51,18 @@ class BoardColumn extends Component {
             >
                 <CardBody className="m-0 p-0">
                     <CardTitle className="h1 text-center">{tasksItem.status}</CardTitle>
-                    {isAdding ? (
+                    {tasksItem.status === 0 && (isAdding ? (
                         <AddTask onAddTask={this.handleAddTask} />
                     ) : (
-                        <Button onClick={this.handleToggleAdd}>+ Add</Button>
-                    )}
+                            <Button
+                                onClick={this.handleToggleAdd}
+                                className="w-auto p"
+                            >
+                                + Add
+                            </Button>
+
+
+                    ))}
 
                     {tasksItem.tasks.length || isAdding ? (
                         tasksItem.tasks.map((task) => (
