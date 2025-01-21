@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Task from '../kanban/Task';
 import { fetchUserByUsernameAsync } from '../../redux/slice/user/userSlice';
 import '../../assets/styles/User.css';
+import EditProfile from './EditProfile';
 
 class Profile extends React.Component {
     constructor(props) {
@@ -68,7 +69,7 @@ class Profile extends React.Component {
                                 <h5 className="mt-2 text-muted">{userData.user.email}</h5>
                                 <hr />
                                 {isEdit ? (
-                                    <div>Edit Profile Component</div>
+                                    <EditProfile toggleEdit={this.toggleEdit}/>
                                 ) : (
                                     <div>
                                         <h4>About</h4>

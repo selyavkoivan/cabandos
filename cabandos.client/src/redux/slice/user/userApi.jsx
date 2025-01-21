@@ -71,8 +71,11 @@ export const userApi = {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to edit user');
-        }
+            const data = await response.json();
+            throw data;
+        } 
+
+        return userDTO.username;
     },
 
     async editUserPassword(username, userDTO) {
@@ -85,7 +88,8 @@ export const userApi = {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to edit user password');
-        }
+            const data = await response.json();
+            throw data;
+        } 
     },
 };

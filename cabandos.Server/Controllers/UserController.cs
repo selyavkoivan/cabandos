@@ -40,14 +40,14 @@ public class UserController : ControllerBase
         Ok(await _mediator.Send(new GetUserByUsernameQuery(searchUserDTO)));
 
     [HttpPost("edit/userdata/{username}")]
-    public async Task<IActionResult> EditUser([FromQuery] string username, [FromBody] UserDTO userDTO)
+    public async Task<IActionResult> EditUser(string username, [FromBody] UserDTO userDTO)
     {
         await _mediator.Send(new EditUserCommand(username, userDTO));
         return NoContent();
     }
 
     [HttpPost("edit/password/{username}")]
-    public async Task<IActionResult> EditUserPassword([FromQuery] string username, [FromBody] UserDTO userDTO)
+    public async Task<IActionResult> EditUserPassword(string username, [FromBody] UserDTO userDTO)
     {
         await _mediator.Send(new EditUserPasswordCommand(username, userDTO));
         return NoContent();

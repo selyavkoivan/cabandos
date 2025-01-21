@@ -24,7 +24,9 @@ public class EditUserHandler : IRequestHandler<EditUserCommand>
         if (user is not null)
         {
             user.UpdateFromDTO(request.UserDTO);
-            await _userManager.UpdateAsync(user);
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded) return;
+            else throw new Exception(result.Errors.First().Description);
         }
         return;
     }

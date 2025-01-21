@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { userApi } from './userApi';
+import NotificationManager from '../../../components/shared/notifications/NotificationManager'
 
 export const fetchAllUsersAsync = createAsyncThunk(
     'user/fetchAllUsers',
@@ -35,15 +36,23 @@ export const fetchMeAsync = createAsyncThunk(
 
 export const editUserAsync = createAsyncThunk(
     'user/editUser',
-    async (userDTO) => {
-        await userApi.editUser(userDTO);
+    async (userDTO, { rejectWithValue }) => {
+        try {
+            return await userApi.editUser(userDTO.username, userDTO.userDTO);
+        } catch (error) {
+            return rejectWithValue(error);
+        }
     }
 );
 
 export const editUserPasswordAsync = createAsyncThunk(
     'user/editUserPassword',
-    async (passwordDTO) => {
-        await userApi.editUserPassword(passwordDTO);
+    async (passwordDTO, { rejectWithValue }) => {
+        try {
+            return await userApi.editUserPassword(passwordDTO);
+        } catch (error) {
+            return rejectWithValue(error);
+        }
     }
 );
 
@@ -110,25 +119,25 @@ const userSlice = createSlice({
             })
             .addCase(editUserAsync.pending, (state) => {
                 state.loading = true;
-                state.error = null;
             })
-            .addCase(editUserAsync.fulfilled, (state) => {
+            .addCase(editUserAsync.fulfilled, (state, action) => {
                 state.loading = false;
+                localStorage.setItem('successedMessage', 'User profile updated successfully');
+                window.location.replace('/profile/' + action.payload);
             })
             .addCase(editUserAsync.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message;
+                NotificationManager.showError(action.payload.error_description);
             })
             .addCase(editUserPasswordAsync.pending, (state) => {
                 state.loading = true;
-                state.error = null;
             })
             .addCase(editUserPasswordAsync.fulfilled, (state) => {
                 state.loading = false;
             })
             .addCase(editUserPasswordAsync.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message;
+                NotificationManager.showError(action.payload.detail);
             });
     },
 });
