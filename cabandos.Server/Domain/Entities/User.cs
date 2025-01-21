@@ -31,6 +31,11 @@ public class User : IdentityUser
 
     public void UpdateEmail(string email, UserManager<User> manager)
     {
+        if (manager.Users.Any(u => u.Email == email))
+        {
+            throw new Exception("Email is already in use.");
+        }
+
         Email = email;
         NormalizedEmail = manager.NormalizeEmail(email);
         EmailConfirmed = true;
