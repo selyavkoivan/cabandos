@@ -9,7 +9,8 @@ public class User : IdentityUser
     [StringLength(20, ErrorMessage = "Username cannot exceed 20 characters.")]
     public override string UserName { get; set; }
 
-    [StringLength(30, ErrorMessage = "Email cannot exceed 30 characters.")]
+    
+    [StringLength(50, ErrorMessage = "Email cannot exceed 30 characters.")]
     public override string Email { get; set; }
 
     public User(UserDTO userDto)
@@ -25,8 +26,15 @@ public class User : IdentityUser
     public void UpdateFromDTO(UserDTO userDto)
     {
         UserName = userDto.Username;
+        Email = userDto.Email;
     }
 
+    public void UpdateEmail(string email, UserManager<User> manager)
+    {
+        Email = email;
+        NormalizedEmail = manager.NormalizeEmail(email);
+        EmailConfirmed = true;
+    }
 
     public ICollection<Task>? Tasks { get; set; } = new List<Task>();
 }

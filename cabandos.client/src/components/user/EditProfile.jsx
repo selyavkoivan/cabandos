@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloudUpload } from "@fortawesome/free-solid-svg-icons";
+import { faCloudUpload, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { editUserAsync, fetchUserByUsernameAsync } from '../../redux/slice/user/userSlice';
 import ValidatedInput from '../shared/ValidatedInput';
 import EditPassword from './EditPassword'
@@ -10,10 +10,10 @@ class EditProfile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editEmail: false,
             editPassword: false,
             inputs: {
                 userName: { value: this.props.currentUser?.user.userName || '', error: '' },
+                email: { value: this.props.currentUser?.user.email || '', error: '' },
             },
         };
     }
@@ -27,10 +27,6 @@ class EditProfile extends React.Component {
         }));
     };
 
-    handleEmailEdit = () => {
-       
-    };
-
     toggleEditPassword = () => {
         this.setState((prevState) => ({ editPassword: !prevState.editPassword }));
     };
@@ -41,6 +37,9 @@ class EditProfile extends React.Component {
 
         if (!inputs.userName.value.trim()) {
             newInputs.userName.error = 'Enter your username.';
+        }
+        if (!inputs.email.value.trim()) {
+            newInputs.email.error = 'Enter your email.';
         }
 
         this.setState({ inputs: newInputs });
@@ -56,8 +55,9 @@ class EditProfile extends React.Component {
         const { inputs } = this.state;
         const userDTO = {
             username: inputs.userName.value,
+            email: inputs.email.value,
         };
-        this.props.editUserAsync({ username: this.props.currentUser.user.userName, userDTO: userDTO}); 
+        this.props.editUserAsync({ username: this.props.currentUser.user.userName, userDTO: userDTO });
     };
 
     handleCancel = () => {
@@ -65,7 +65,7 @@ class EditProfile extends React.Component {
     };
 
     handleUpload = () => {
-        
+
     };
 
     render() {
@@ -78,11 +78,9 @@ class EditProfile extends React.Component {
 
         return (
             <div className="col-12 m-0 ps-3">
-                {editEmail ? (
-                    <EditEmail toggleEditEmail={this.toggleEditEmail} toggleEdit={this.props.toggleEdit} />
-                ) : editPassword ? (
+                {editPassword ? (
                     <EditPassword toggleEditPassword={this.toggleEditPassword} toggleEdit={this.props.toggleEditPassword} />
-                ) : (   
+                ) : (
                     <div className="p-2">
                         <h2 className="mb-3">Edit user data</h2>
                         <ValidatedInput
@@ -93,6 +91,20 @@ class EditProfile extends React.Component {
                             validate={(value) => (!value.trim() ? 'Enter your username.' : '')}
                             onChange={this.handleInputChange}
                             icon={<span>@</span>}
+                        />
+                        <ValidatedInput
+                            maxLength={50}
+                            type="text"
+                            name="email"
+                            placeholder="Email"
+                            value={inputs.email.value || currentUser.user.email}
+                            validate={(value) =>
+                                !value.trim() || !/\S+@\S+\.\S+/.test(value)
+                                    ? 'Enter a valid email address.'
+                                    : ''
+                            }
+                            onChange={this.handleInputChange}
+                            icon={<FontAwesomeIcon icon={faEnvelope} />}
                         />
 
                         <div className="m-0 p-0">
@@ -115,8 +127,8 @@ class EditProfile extends React.Component {
 
                         <div className="d-flex justify-content-end mt-3">
                             <button className="btn btn-primary me-2" onClick={this.handleEdit}>Save</button>
-                                    <button className="btn btn-secondary me-2" onClick={this.handleEmailEdit}>Edit email</button>
-                                    <button className="btn btn-secondary me-2" onClick={this.toggleEditPassword}>Edit password</button>
+                            <button className="btn btn-secondary me-2" onClick={this.toggleEditPassword}>
+                                Edit password</button>
                             <button className="btn btn-outline-danger" onClick={this.handleCancel}>Cancel</button>
                         </div>
                     </div>
