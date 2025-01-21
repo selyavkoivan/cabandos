@@ -54,14 +54,9 @@ class BoardColumn extends Component {
                     {tasksItem.status === 0 && (isAdding ? (
                         <AddTask onAddTask={this.handleAddTask} />
                     ) : (
-                            <Button
-                                onClick={this.handleToggleAdd}
-                                className="w-auto p"
-                            >
+                            <Button onClick={this.handleToggleAdd} className="w-auto p-2">
                                 + Add
                             </Button>
-
-
                     ))}
 
                     {tasksItem.tasks.length || isAdding ? (
