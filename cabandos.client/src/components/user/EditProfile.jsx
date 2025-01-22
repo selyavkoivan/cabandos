@@ -1,10 +1,11 @@
 ﻿import React from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloudUpload, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { editUserAsync, fetchUserByUsernameAsync, uploadUserPhotoAsync } from '../../redux/slice/user/userSlice';
 import ValidatedInput from '../shared/ValidatedInput';
 import EditPassword from './EditPassword';
+import FileUploader from '../shared/FileUploader'
 
 class EditProfile extends React.Component {
     constructor(props) {
@@ -64,43 +65,11 @@ class EditProfile extends React.Component {
         this.props.toggleEdit();
     };
 
-    handleClick = () => {
-        const fileInput = document.querySelector('#file');
-        fileInput.click();
-    };
-
-    handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            this.props.uploadUserPhotoAsync({
-                username: this.props.currentUser.user.userName,
-                file: formData,
-            });
-        }
-    };
-
-    handleDrop = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const file = e.dataTransfer.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            this.props.uploadUserPhotoAsync({
-                username: this.props.currentUser.user.userName,
-                file: formData,
-            });
-        }
-    };
-
-    handleDragOver = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+    handleUploadPhotoAsync = (formData) => {
+        this.props.uploadUserPhotoAsync({
+            username: this.props.currentUser.user.userName,
+            file: formData,
+        });
     };
 
 
@@ -143,29 +112,7 @@ class EditProfile extends React.Component {
                             icon={<FontAwesomeIcon icon={faEnvelope} />}
                         />
 
-                        <div className="m-0 p-0">
-                            <div className="mt-3">
-                                <div
-                                    className="text-center mt-3 border border-5 rounded p-5"
-                                    id="drop-area"
-                                    onClick={this.handleClick}
-                                    onDragOver={this.handleDragOver} 
-                                    onDrop={this.handleDrop} 
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <FontAwesomeIcon icon={faCloudUpload} /> Upload your photo: click or drag it here
-                                    <input
-                                        type="file"
-                                        id="file"
-                                        name="file"
-                                        className="d-none" 
-                                        accept="image/*"
-                                        onChange={this.handleFileChange} 
-                                    />
-                                </div>
-
-                            </div>
-                        </div>
+                            <FileUploader acceptType='image/*' uploadFile={this.handleUploadPhotoAsync}/>
 
                         <div className="d-flex justify-content-end mt-3">
                             <button className="btn btn-primary me-2" onClick={this.handleEdit}>Save</button>
