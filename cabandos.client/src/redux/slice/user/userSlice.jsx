@@ -56,6 +56,17 @@ export const editUserPasswordAsync = createAsyncThunk(
     }
 );
 
+export const uploadUserPhotoAsync = createAsyncThunk(
+    'user/uploadUserPhoto',
+    async (photoDTO, { rejectWithValue }) => {
+        try {
+            return await userApi.uploadUserPhoto(photoDTO.username, photoDTO.file);
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 const initialState = {
     users: [],
     currentUser: null,
@@ -137,6 +148,18 @@ const userSlice = createSlice({
                 NotificationManager.showSuccess('Password updated successfully');
             })
             .addCase(editUserPasswordAsync.rejected, (state, action) => {
+                state.loading = false;
+                NotificationManager.showError(action.payload.error_description);
+            })
+            .addCase(uploadUserPhotoAsync.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(uploadUserPhotoAsync.fulfilled, (state) => {
+                state.loading = false;
+                localStorage.setItem('successedMessage', 'Profile avatar updated successfully');
+                window.location.reload();
+            })
+            .addCase(uploadUserPhotoAsync.rejected, (state, action) => {
                 state.loading = false;
                 NotificationManager.showError(action.payload.error_description);
             });

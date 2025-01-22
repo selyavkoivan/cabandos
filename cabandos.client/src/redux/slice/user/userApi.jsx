@@ -92,4 +92,16 @@ export const userApi = {
             throw data;
         } 
     },
+
+    async uploadUserPhoto(username, file) {
+        const response = await fetch('/api/user/edit/avatar/' + username, {
+            method: 'POST',
+            body: file
+        })
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw data;
+        }
+    },
 };
