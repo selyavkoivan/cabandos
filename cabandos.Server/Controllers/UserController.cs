@@ -57,15 +57,7 @@ public class UserController : ControllerBase
     [HttpPost("edit/avatar/{userName}")]
     public async Task<IActionResult> UploadAvatar(string userName, IFormFile file)
     {
-
-        var result = await CloudinaryUploader.UploadAsync(file);
-
-        //var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == userName);
-        //user.AvatarUrl = result.Url.AbsoluteUri;
-
-        //await _userManager.UpdateAsync(user);
-
+        await _mediator.Send(new UploadUserAvatarCommand(userName, file));
         return Ok();
     }
 }
-
