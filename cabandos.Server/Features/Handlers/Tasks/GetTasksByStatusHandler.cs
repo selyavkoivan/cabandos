@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace cabandos.Server.Features.Tasks.Handlers;
+namespace cabandos.Server.Features.Handlers.Tasks;
 
 public class GetTasksByStatusHandler : IRequestHandler<GetTasksByStatusQuery, List<object>>
 {

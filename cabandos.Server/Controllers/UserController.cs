@@ -1,5 +1,6 @@
 ﻿using cabandos.Server.Domain.DTO;
-using cabandos.Server.Features.Users.Handlers;
+using cabandos.Server.Features.Services;
+using cabandos.Server.Features.Handlers.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,20 @@ public class UserController : ControllerBase
     {
         await _mediator.Send(new EditUserPasswordCommand(username, userDTO));
         return NoContent();
+    }
+
+    [HttpPost("edit/avatar/{userName}")]
+    public async Task<IActionResult> UploadAvatar(string userName, IFormFile file)
+    {
+
+        var result = await CloudinaryUploader.UploadAsync(file);
+
+        //var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+        //user.AvatarUrl = result.Url.AbsoluteUri;
+
+        //await _userManager.UpdateAsync(user);
+
+        return Ok();
     }
 }
 

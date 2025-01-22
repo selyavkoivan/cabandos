@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using cabandos.Server.Migrations;
 using cabandos.Server.Domain.DTO;
 
-namespace cabandos.Server.Features.Users.Handlers;
+namespace cabandos.Server.Features.Handlers.Users;
 
 public class GetUserByUsernameHandler : IRequestHandler<GetUserByUsernameQuery, object>
 {
@@ -43,7 +43,7 @@ public class GetUserByUsernameHandler : IRequestHandler<GetUserByUsernameQuery, 
                             (ur, role) => role.Name
                         )
                         .ToList();
-               return new {user, roles };
+                return new { user, roles };
             }
 
             return user;

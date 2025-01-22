@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace cabandos.Server.Features.Tasks.Handlers;
+namespace cabandos.Server.Features.Handlers.Tasks;
 using Task = Domain.Entities.Task;
 
 public class AddTaskHandler : IRequestHandler<AddTaskCommand, Task>
@@ -15,16 +15,16 @@ public class AddTaskHandler : IRequestHandler<AddTaskCommand, Task>
 
     public AddTaskHandler(ApplicationContext context, UserManager<User> userManager)
     {
-        this._context = context;
-        this._userManager = userManager;
+        _context = context;
+        _userManager = userManager;
     }
 
     public async Task<Task> Handle(AddTaskCommand request, CancellationToken cancellationToken)
     {
         var task = new Task(request.TaskDTO);
-        var user = await this._userManager.GetUserAsync(request.User);
+        var user = await _userManager.GetUserAsync(request.User);
 
-        if(user is not null)
+        if (user is not null)
         {
             task.User = user;
         }
@@ -43,7 +43,7 @@ public class AddTaskCommand : IRequest<Task>
 
     public AddTaskCommand(TaskDTO taskDTO, ClaimsPrincipal user)
     {
-        this.TaskDTO = taskDTO;
-        this.User = user;
+        TaskDTO = taskDTO;
+        User = user;
     }
 }

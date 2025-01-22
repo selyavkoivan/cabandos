@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Task = System.Threading.Tasks.Task;
 
-namespace cabandos.Server.Features.Auth.Handlers;
+namespace cabandos.Server.Features.Handlers.Auth;
 
 public class IsSignInHandler : IRequestHandler<IsSignInQuery, bool>
 {

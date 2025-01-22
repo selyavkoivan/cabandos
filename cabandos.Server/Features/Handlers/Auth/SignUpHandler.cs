@@ -1,10 +1,10 @@
-﻿using cabandos.Server.Features.Auth.Exceptions;
+﻿using cabandos.Server.Features.Exceptions;
 using cabandos.Server.Domain.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using cabandos.Server.Domain.Entities;
 
-namespace cabandos.Server.Features.Auth.Handlers
+namespace cabandos.Server.Features.Handlers.Auth
 {
     public class SignUpHandler : IRequestHandler<SignUpCommand, IdentityResult>
     {

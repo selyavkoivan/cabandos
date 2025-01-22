@@ -3,7 +3,7 @@ using cabandos.Server.Domain.DTO;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace cabandos.Server.Features.Users.Handlers;
+namespace cabandos.Server.Features.Handlers.Users;
 
 public class SearchUsersHandler : IRequestHandler<SearchUsersQuery, List<object>>
 {

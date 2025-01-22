@@ -1,4 +1,4 @@
-﻿using cabandos.Server.Features.Auth.Exceptions;
+﻿using cabandos.Server.Features.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 

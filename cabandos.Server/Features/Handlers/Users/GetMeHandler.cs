@@ -7,7 +7,7 @@ using System.Security.Claims;
 using cabandos.Server.Migrations;
 using cabandos.Server.Domain.DTO;
 
-namespace cabandos.Server.Features.Users.Handlers;
+namespace cabandos.Server.Features.Handlers.Users;
 
 public class GetMeHandler : IRequestHandler<GetMeQuery, object>
 {
@@ -22,7 +22,7 @@ public class GetMeHandler : IRequestHandler<GetMeQuery, object>
 
     public async Task<object> Handle(GetMeQuery request, CancellationToken cancellationToken)
     {
-        var user = await this._userManager.GetUserAsync(request.User);
+        var user = await _userManager.GetUserAsync(request.User);
         if (user is not null)
         {
             if (request.SearchUsersOptions.IncludeTasks)
@@ -59,7 +59,7 @@ public class GetMeQuery : IRequest<object>
 
     public GetMeQuery(ClaimsPrincipal user)
     {
-        User = user;;
+        User = user; ;
     }
 
     public GetMeQuery(ClaimsPrincipal user, SearchUsersDTO searchUsersDTO)

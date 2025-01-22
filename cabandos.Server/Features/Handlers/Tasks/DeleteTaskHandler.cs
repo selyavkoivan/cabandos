@@ -1,7 +1,7 @@
 ﻿using cabandos.Server.Data;
 using MediatR;
 
-namespace cabandos.Server.Features.Tasks.Handlers;
+namespace cabandos.Server.Features.Handlers.Tasks;
 public class DeleteTaskHandler : IRequestHandler<DeleteTaskCommand>
 {
     private ApplicationContext _context;

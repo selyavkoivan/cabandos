@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using cabandos.Server.Domain.DTO;
 
-namespace cabandos.Server.Features.Users.Handlers;
+namespace cabandos.Server.Features.Handlers.Users;
 
 public class EditUserPasswordHandler : IRequestHandler<EditUserPasswordCommand>
 {

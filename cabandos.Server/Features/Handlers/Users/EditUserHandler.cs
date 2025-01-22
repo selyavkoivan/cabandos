@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using cabandos.Server.Domain.DTO;
 using Task = System.Threading.Tasks.Task;
 
-namespace cabandos.Server.Features.Users.Handlers;
+namespace cabandos.Server.Features.Handlers.Users;
 
 public class EditUserHandler : IRequestHandler<EditUserCommand>
 {

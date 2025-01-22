@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using cabandos.Server.Domain.Entities;
-using cabandos.Server.Features.Auth.Attributes.Filter;
-using cabandos.Server.Features.Auth.Configurations;
+using cabandos.Server.Features.Configurations;
+using cabandos.Server.Features.Attributes.Filter;
 
 var builder = WebApplication.CreateBuilder(args);
 

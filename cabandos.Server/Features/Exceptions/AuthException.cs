@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace cabandos.Server.Features.Auth.Exceptions;
+namespace cabandos.Server.Features.Exceptions;
 public class AuthException : Exception
 {
     public string ErrorCode { get; }

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
-namespace cabandos.Server.Features.Auth.Handlers;
+namespace cabandos.Server.Features.Handlers.Auth;
 
 public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand, bool>
 {

@@ -1,6 +1,5 @@
-﻿using cabandos.Server.Features.Auth.Exceptions;
-using cabandos.Server.Features.Auth.Handlers;
-using cabandos.Server.Domain.DTO;
+﻿using cabandos.Server.Domain.DTO;
+using cabandos.Server.Features.Handlers.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

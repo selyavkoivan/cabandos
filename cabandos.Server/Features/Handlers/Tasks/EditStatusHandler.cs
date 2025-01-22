@@ -4,7 +4,7 @@ using cabandos.Server.Domain.Entities;
 
 using Task = System.Threading.Tasks.Task;
 
-namespace cabandos.Server.Features.Tasks.Handlers;
+namespace cabandos.Server.Features.Handlers.Tasks;
 
 public class EditStatusHandler : IRequestHandler<EditStatusCommand>
 {
