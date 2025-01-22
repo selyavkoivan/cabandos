@@ -30,15 +30,16 @@ class Users extends Component {
                         <div className="col-4 m-0 p-3" key={userRole.user.id}>
                             <div className="form-control">
                                 <div className="row">
-                                    <div className="p-2">
+                                    <div className="p-2" style={{ aspectRatio: '1'}}>
                                         <a href={`/profile/${userRole.user.userName}`}>
                                             <img
-                                                alt=""
-                                                className="col-12 img img-responsive rounded-circle"
-                                                src=""
+                                                alt="Profile Image"
+                                                className="img-fluid rounded-circle w-100 h-100 object-fit-cover"
+                                                src={userRole.user.avatarUrl}
                                             />
                                         </a>
                                     </div>
+
                                     <div className="col-12 m-0">
                                         <a
                                             className="text-decoration-none text-reset"

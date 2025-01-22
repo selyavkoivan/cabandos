@@ -47,7 +47,7 @@ class Profile extends React.Component {
                     <Col md={4}>
                         <div className="profile-sidebar">
                             <CardImg
-                                src=""
+                                src={userData.user.avatarUrl}
                                 className="profile-img"
                                 alt="Profile Image"
                             />
