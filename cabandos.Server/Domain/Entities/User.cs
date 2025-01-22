@@ -13,6 +13,9 @@ public class User : IdentityUser
     [StringLength(50, ErrorMessage = "Email cannot exceed 50 characters.")]
     public override string Email { get; set; }
 
+    public string? AvatarUrl { get; set; }
+
+
     public User(UserDTO userDto)
     {
         UserName = userDto.Username;
