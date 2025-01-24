@@ -7,6 +7,7 @@ using System.Reflection;
 using cabandos.Server.Domain.Entities;
 using cabandos.Server.Features.Configurations;
 using cabandos.Server.Features.Attributes.Filter;
+using cabandos.Server.Features.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,7 @@ builder.Services.AddIdentity<User, IdentityRole>(o =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+builder.Services.AddScoped<IChatService, ChatService>();
 
 var app = builder.Build();
 app.UseWebSockets();
