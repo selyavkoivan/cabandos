@@ -117,7 +117,7 @@ class Profile extends React.Component {
                     </Col>
                 </Row>
 
-                {showChat && <ChatComponent />}
+                {showChat && <ChatComponent otherUserId={userData.user.id} />}
             </Container>
         );
     }

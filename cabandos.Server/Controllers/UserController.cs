@@ -21,20 +21,37 @@ public class UserController : ControllerBase
         _mediator = mediator;
     }
 
-    private static ConcurrentDictionary<string, WebSocket> _clients = new ConcurrentDictionary<string, WebSocket>();
+    private static ConcurrentDictionary<string, List<WebSocket>> _chatRooms = new ConcurrentDictionary<string, List<WebSocket>>();
 
-    [HttpGet]
-    public async Task Get()
+
+    [HttpGet("chat/{otherUserId}")]
+    [Authorize]
+    public async Task Get(string otherUserId)
     {
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
+            var me = await _mediator.Send(new GetMeQuery(HttpContext.User)) as Domain.Entities.User;
+
+            if (me.Id== null)
+            {
+                HttpContext.Response.StatusCode = 400;
+                return; 
+            }
+            
             using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+
             string clientId = Guid.NewGuid().ToString();
-            _clients[clientId] = webSocket;
+            string chatRoomId = GetChatRoomId(me.Id, otherUserId); 
 
-            Console.WriteLine($"Client {clientId} connected.");
+            _chatRooms.AddOrUpdate(chatRoomId, new List<WebSocket> { webSocket }, (key, list) =>
+            {
+                list.Add(webSocket);
+                return list;
+            });
 
-            await HandleWebSocketConnection(webSocket, clientId);
+            Console.WriteLine($"Client {clientId} connected to chat room {chatRoomId}.");
+
+            await HandleWebSocketConnection(webSocket, clientId, chatRoomId);
         }
         else
         {
@@ -42,7 +59,13 @@ public class UserController : ControllerBase
         }
     }
 
-    private async Task HandleWebSocketConnection(WebSocket webSocket, string clientId)
+    private string GetChatRoomId(string userId, string otherUserId)
+    {
+        var sortedUserIds = new[] { userId, otherUserId }.OrderBy(u => u).ToList();
+        return string.Join("-", sortedUserIds);
+    }
+
+    private async Task HandleWebSocketConnection(WebSocket webSocket, string clientId, string chatRoomId)
     {
         var buffer = new byte[1024 * 4];
         WebSocketReceiveResult result;
@@ -56,7 +79,7 @@ public class UserController : ControllerBase
 
                 Console.WriteLine($"Received from {clientId}: {message}");
 
-                foreach (var client in _clients.Values)
+                foreach (var client in _chatRooms[chatRoomId])
                 {
                     if (client != webSocket && client.State == WebSocketState.Open)
                     {
@@ -73,11 +96,16 @@ public class UserController : ControllerBase
         }
         finally
         {
-            _clients.TryRemove(clientId, out _);
+            _chatRooms.AddOrUpdate(chatRoomId, new List<WebSocket>(), (key, list) =>
+            {
+                list.Remove(webSocket);
+                return list;
+            });
             await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
-            Console.WriteLine($"Client {clientId} disconnected.");
+            Console.WriteLine($"Client {clientId} disconnected from chat room {chatRoomId}.");
         }
     }
+
 
     [HttpPost("search")]
     public async Task<IActionResult> SearchUsers([FromBody] SearchUsersDTO searchUserDTO) =>
