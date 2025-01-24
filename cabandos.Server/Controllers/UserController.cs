@@ -4,6 +4,9 @@ using cabandos.Server.Features.Handlers.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.WebSockets;
+using System.Text;
+using System.Collections.Concurrent;
 
 namespace cabandos.Server.Controllers;
 
@@ -16,6 +19,64 @@ public class UserController : ControllerBase
     public UserController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    private static ConcurrentDictionary<string, WebSocket> _clients = new ConcurrentDictionary<string, WebSocket>();
+
+    [HttpGet]
+    public async Task Get()
+    {
+        if (HttpContext.WebSockets.IsWebSocketRequest)
+        {
+            using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+            string clientId = Guid.NewGuid().ToString();
+            _clients[clientId] = webSocket;
+
+            Console.WriteLine($"Client {clientId} connected.");
+
+            await HandleWebSocketConnection(webSocket, clientId);
+        }
+        else
+        {
+            HttpContext.Response.StatusCode = 400;
+        }
+    }
+
+    private async Task HandleWebSocketConnection(WebSocket webSocket, string clientId)
+    {
+        var buffer = new byte[1024 * 4];
+        WebSocketReceiveResult result;
+
+        try
+        {
+            do
+            {
+                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+
+                Console.WriteLine($"Received from {clientId}: {message}");
+
+                foreach (var client in _clients.Values)
+                {
+                    if (client != webSocket && client.State == WebSocketState.Open)
+                    {
+                        var response = Encoding.UTF8.GetBytes($"{clientId}: {message}");
+                        await client.SendAsync(new ArraySegment<byte>(response), WebSocketMessageType.Text, true, CancellationToken.None);
+                    }
+                }
+            }
+            while (!result.CloseStatus.HasValue);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error for {clientId}: {ex.Message}");
+        }
+        finally
+        {
+            _clients.TryRemove(clientId, out _);
+            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+            Console.WriteLine($"Client {clientId} disconnected.");
+        }
     }
 
     [HttpPost("search")]
