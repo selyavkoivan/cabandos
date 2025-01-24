@@ -7,12 +7,14 @@ import Task from '../kanban/Task';
 import { fetchUserByUsernameAsync } from '../../redux/slice/user/userSlice';
 import '../../assets/styles/User.css';
 import EditProfile from './EditProfile';
+import ChatComponent from './ChatComponent';
 
 class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isEdit: false,
+            showChat: false, 
         };
     }
 
@@ -25,9 +27,13 @@ class Profile extends React.Component {
         this.setState((prevState) => ({ isEdit: !prevState.isEdit }));
     };
 
+    toggleChat = () => {
+        this.setState((prevState) => ({ showChat: !prevState.showChat }));
+    };
+
     render() {
         const { userData, loading, error } = this.props;
-        const { isEdit } = this.state;
+        const { isEdit, showChat } = this.state;
 
         if (loading) {
             return <div>Loading...</div>;
@@ -59,6 +65,9 @@ class Profile extends React.Component {
                                 <Button variant="primary" onClick={this.toggleEdit}>
                                     <FontAwesomeIcon icon={faPenToSquare} /> Edit Profile
                                 </Button>
+                                <Button variant="primary" onClick={this.toggleChat} className="mt-2">
+                                    {showChat ? 'Hide Chat' : 'Open Chat'}
+                                </Button>
                             </div>
                         </div>
                     </Col>
@@ -69,7 +78,7 @@ class Profile extends React.Component {
                                 <h5 className="mt-2 text-muted">{userData.user.email}</h5>
                                 <hr />
                                 {isEdit ? (
-                                    <EditProfile toggleEdit={this.toggleEdit}/>
+                                    <EditProfile toggleEdit={this.toggleEdit} />
                                 ) : (
                                     <div>
                                         <h4>About</h4>
@@ -107,6 +116,8 @@ class Profile extends React.Component {
                         </div>
                     </Col>
                 </Row>
+
+                {showChat && <ChatComponent />}
             </Container>
         );
     }

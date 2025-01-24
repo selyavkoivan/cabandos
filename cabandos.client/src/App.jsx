@@ -6,7 +6,7 @@ import './assets/styles/App.css';
 import store from './redux/store';
 import { Provider } from 'react-redux';
 import NotificationManager from './components/shared/notifications/NotificationManager'
-import ChatComponent from './components/user/Chat'
+
 class App extends Component {
     static displayName = App.name;
 
@@ -38,7 +38,12 @@ class App extends Component {
         return (
             <Provider store={store}>
                 <Layout>
-                    <ChatComponent/>
+                    <Routes>
+                        {AppRoutes.map((route, index) => {
+                            const { element, ...rest } = route;
+                            return serverReady ? <Route key={index} {...rest} element={element} /> : null;
+                        })}
+                    </Routes>
                 </Layout>
             </Provider>
         );
