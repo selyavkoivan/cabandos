@@ -11,6 +11,7 @@ import {
 import { Link } from 'react-router-dom';
 import '../../assets/styles/NavMenu.css';
 import { isLoginAsync, logoutAsync } from '../../redux/slice/auth/authSlice'
+import { fetchMeAsync } from '../../redux/slice/user/userSlice'
 import { connect } from 'react-redux';
 
 class NavMenu extends Component {
@@ -28,7 +29,9 @@ class NavMenu extends Component {
     }
 
     async componentDidMount() {
-        this.props.isLoginAsync();
+        if (!this.props.isLogin) {
+            this.props.isLoginAsync();
+        }
     }
 
     toggleNavbar() {
@@ -44,8 +47,12 @@ class NavMenu extends Component {
     }
 
     render() {
-        const { isLogin } = this.props
+        const { isLogin, me } = this.props
+        if (isLogin && !me) {
+            this.props.fetchMeAsync({ includeTasks: true, includeRoles: true });
+        }
 
+        
         return (
             <header>
                 <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3"
@@ -96,11 +103,13 @@ class NavMenu extends Component {
 
 const mapStateToProps = (state) => ({
     isLogin: state.auth.isLogin,
+    me: state.user.me,
 });
 
 const mapDispatchToProps = {
     isLoginAsync,
     logoutAsync,
+    fetchMeAsync,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavMenu);
