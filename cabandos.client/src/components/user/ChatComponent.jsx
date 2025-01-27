@@ -8,7 +8,7 @@ class ChatComponent extends Component {
         this.state = {
             websocket: null,
             isConnected: false,
-            messages: [], // Структура сообщений [{ text, time, from, to }]
+            messages: [], 
             message: '',
         };
     }
@@ -20,6 +20,20 @@ class ChatComponent extends Component {
             console.error('User data is missing.');
             return;
         }
+
+        fetch(`/api/chat/history/${otherUserId}`, {method: 'GET'})
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch chat history');
+                }
+                return response.json();
+            })
+            .then((messages) => {
+                this.setState({ messages });
+            })
+            .catch((error) => {
+                console.error('Error loading chat history:', error);
+            });
 
         const ws = new WebSocket(`wss://localhost:7045/api/chat/${otherUserId}`);
 
@@ -66,12 +80,11 @@ class ChatComponent extends Component {
 
         if (websocket && isConnected && message.trim()) {
             const messageObject = {
-                text: message.trim(),
-                time: new Date().toISOString(),
-                from: me.user.id, // Ваш ID
-                to: otherUserId, // ID собеседника
+                message: message.trim(),
+                sentAt: new Date().toISOString(),
+                fromUserId: me.user.id, 
+                toUserId: otherUserId, 
             };
-            alert(JSON.stringify(messageObject))
             websocket.send(JSON.stringify(messageObject));
 
             this.setState((prevState) => ({
@@ -95,16 +108,16 @@ class ChatComponent extends Component {
                     {messages.map((msg, index) => (
                         <div
                             key={index}
-                            className={`chat-message ${msg.from === me.user.id ? 'chat-message-own' : '' 
+                            className={`chat-message ${msg.fromUserId === me.user.id ? 'chat-message-own' : '' 
                                 }`}
                         >
                             <div className="chat-message-meta">
                                 <span className="chat-message-time">
-                                    {new Date(msg.time).toLocaleTimeString()}
+                                    {new Date(msg.sentAt).toLocaleTimeString()}
                                 </span>
                             </div>
                             <div className="chat-message-text">
-                                {msg.text.split('\n').map((line, i) => (
+                                {msg.message.split('\n').map((line, i) => (
                                     <React.Fragment key={i}>
                                         {line}
                                         <br />

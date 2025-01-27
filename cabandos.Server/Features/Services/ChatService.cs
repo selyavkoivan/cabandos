@@ -2,7 +2,9 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using cabandos.Server.Data;
 using cabandos.Server.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Task = System.Threading.Tasks.Task;
 
 namespace cabandos.Server.Features.Services;
@@ -10,12 +12,20 @@ namespace cabandos.Server.Features.Services;
 public interface IChatService
 {
     Task<string> ConnectToChatRoomAsync(User user, string otherUserId, WebSocket webSocket);
-    Task HandleWebSocketMessagesAsync(WebSocket webSocket, string chatRoomId);
+    Task HandleWebSocketMessagesAsync(WebSocket webSocket, string chatRoomId, ApplicationContext applicationContext);
+    Task<List<ChatMessage>> GetChatHistoryAsync(string userId, string otherUserId, ApplicationContext applicationContext);
 }
 
 public class ChatService : IChatService
 {
     private static readonly ConcurrentDictionary<string, List<WebSocket>> _chatRooms = new();
+
+
+    public async Task<List<ChatMessage>> GetChatHistoryAsync(string userId, string otherUserId, ApplicationContext applicationContext)
+    {
+        string chatRoomId = GetChatRoomId(userId, otherUserId);
+        return await applicationContext.ChatMessages.Where(cm => cm.ChatRoomId == chatRoomId).ToListAsync();
+    }
 
     public async Task<string> ConnectToChatRoomAsync(User user, string otherUserId, WebSocket webSocket)
     {
@@ -33,7 +43,7 @@ public class ChatService : IChatService
         return chatRoomId;
     }
 
-    public async Task HandleWebSocketMessagesAsync(WebSocket webSocket, string chatRoomId)
+    public async Task HandleWebSocketMessagesAsync(WebSocket webSocket, string chatRoomId, ApplicationContext applicationContext)
     {
         var buffer = new byte[1024 * 4];
 
@@ -44,15 +54,14 @@ public class ChatService : IChatService
                 var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                 string messageString = Encoding.UTF8.GetString(buffer, 0, result.Count);
 
-                JsonSerializerOptions options = new JsonSerializerOptions();
-                options.PropertyNameCaseInsensitive = true;
-
+                JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var chatMessage = JsonSerializer.Deserialize<ChatMessage>(messageString, options);
 
                 if (chatMessage != null)
                 {
-                    Console.WriteLine($"Received message from {chatMessage.From} to {chatMessage.To} at {chatMessage.Time}: {chatMessage.Text}");
-
+                    chatMessage.ChatRoomId = chatRoomId;
+                    applicationContext.ChatMessages.Add(chatMessage);
+                    await applicationContext.SaveChangesAsync();
 
                     foreach (var client in _chatRooms[chatRoomId])
                     {
@@ -77,22 +86,14 @@ public class ChatService : IChatService
                 list.Remove(webSocket);
                 return list;
             });
+
             await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
         }
     }
-
-
 
     private string GetChatRoomId(string userId, string otherUserId)
     {
         var sortedUserIds = new[] { userId, otherUserId }.OrderBy(id => id).ToArray();
         return string.Join("-", sortedUserIds);
     }
-}
-public class ChatMessage
-{
-    public string Text { get; set; }
-    public string Time { get; set; }
-    public string From { get; set; }
-    public string To { get; set; }
 }

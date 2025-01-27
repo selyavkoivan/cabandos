@@ -9,6 +9,7 @@ public class ApplicationContext : IdentityDbContext<User>
 {
     public override DbSet<User> Users => Set<User>();
     public DbSet<Task> Tasks => Set<Task>();
+    public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options)
            : base(options) => Database.EnsureCreated();

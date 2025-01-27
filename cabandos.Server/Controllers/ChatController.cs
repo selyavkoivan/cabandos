@@ -7,7 +7,6 @@ namespace cabandos.Server.Controllers;
 
 [ApiController]
 [Route("api/chat")]
-[Authorize]
 public class ChatController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -35,5 +34,19 @@ public class ChatController : ControllerBase
         {
             throw new ();
         }
+    }
+
+
+    [HttpGet("history/{otherUserId}")]
+    public async Task<IActionResult> GetChatHistory(string otherUserId)
+    {
+        var result = await _mediator.Send(new GetChatHistoryQuery(HttpContext.User, otherUserId));
+
+        if (!result.Success)
+        {
+            return BadRequest(result.Message);
+        }
+
+        return Ok(result.Messages);
     }
 }
