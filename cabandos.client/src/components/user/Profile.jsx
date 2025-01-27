@@ -14,7 +14,7 @@ class Profile extends React.Component {
         super(props);
         this.state = {
             isEdit: false,
-            showChat: false, 
+            showChat: false,
         };
     }
 
@@ -34,7 +34,7 @@ class Profile extends React.Component {
     render() {
         const { userData, loading, error } = this.props;
         const { isEdit, showChat } = this.state;
-
+        
         if (loading) {
             return <div>Loading...</div>;
         }
@@ -46,7 +46,7 @@ class Profile extends React.Component {
         if (!userData) {
             return null;
         }
-
+        
         return (
             <Container className="mt-5">
                 <Row className="profile-row">
@@ -72,7 +72,7 @@ class Profile extends React.Component {
                         </div>
                     </Col>
                     <Col md={8}>
-                        <div className="profile-info">
+                        {showChat ? <ChatComponent otherUserId={userData.user.id} /> : <div className="profile-info">
                             <div style={{ textAlign: 'left' }}>
                                 <h3 className="mt-3 text-wrap">@{userData.user.userName}</h3>
                                 <h5 className="mt-2 text-muted">{userData.user.email}</h5>
@@ -114,17 +114,18 @@ class Profile extends React.Component {
                                 )}
                             </div>
                         </div>
+                        }
                     </Col>
                 </Row>
 
-                {showChat && <ChatComponent otherUserId={userData.user.id} />}
+
             </Container>
         );
     }
 }
 
 const mapStateToProps = (state) => ({
-    userData: state.user.currentUser,
+    userData: state.user.targerUser,
     loading: state.user.loading,
     error: state.user.error,
 });

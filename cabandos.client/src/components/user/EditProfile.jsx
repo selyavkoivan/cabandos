@@ -13,8 +13,8 @@ class EditProfile extends React.Component {
         this.state = {
             editPassword: false,
             inputs: {
-                userName: { value: this.props.currentUser?.user.userName || '', error: '' },
-                email: { value: this.props.currentUser?.user.email || '', error: '' },
+                userName: { value: this.props.targetUser?.user.userName || '', error: '' },
+                email: { value: this.props.targetUser?.user.email || '', error: '' },
             },
         };
     }
@@ -58,7 +58,7 @@ class EditProfile extends React.Component {
             username: inputs.userName.value,
             email: inputs.email.value,
         };
-        this.props.editUserAsync({ username: this.props.currentUser.user.userName, userDTO: userDTO });
+        this.props.editUserAsync({ username: this.props.targetUser.user.userName, userDTO: userDTO });
     };
 
     handleCancel = () => {
@@ -67,7 +67,7 @@ class EditProfile extends React.Component {
 
     handleUploadPhotoAsync = (formData) => {
         this.props.uploadUserPhotoAsync({
-            username: this.props.currentUser.user.userName,
+            username: this.props.targetUser.user.userName,
             file: formData,
         });
     };
@@ -75,9 +75,9 @@ class EditProfile extends React.Component {
 
     render() {
         const { inputs, editPassword } = this.state;
-        const { currentUser } = this.props;
+        const { targetUser } = this.props;
 
-        if (!currentUser) {
+        if (!targetUser) {
             return <div>Loading...</div>;
         }
 
@@ -92,7 +92,7 @@ class EditProfile extends React.Component {
                             type="text"
                             name="userName"
                             placeholder="Username"
-                            value={inputs.userName.value || currentUser.user.userName}
+                                value={inputs.userName.value || targetUser.user.userName}
                             validate={(value) => (!value.trim() ? 'Enter your username.' : '')}
                             onChange={this.handleInputChange}
                             icon={<span>@</span>}
@@ -102,7 +102,7 @@ class EditProfile extends React.Component {
                             type="text"
                             name="email"
                             placeholder="Email"
-                            value={inputs.email.value || currentUser.user.email}
+                                value={inputs.email.value || targetUser.user.email}
                             validate={(value) =>
                                 !value.trim() || !/\S+@\S+\.\S+/.test(value)
                                     ? 'Enter a valid email address.'
@@ -128,7 +128,7 @@ class EditProfile extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    currentUser: state.user.currentUser,
+    targetUser: state.user.targetUser,
 });
 
 const mapDispatchToProps = {
