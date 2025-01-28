@@ -27,7 +27,6 @@ public class InitiateChatHandler : IRequestHandler<InitiateChatCommand, Initiate
         var user = await _userManager.GetUserAsync(request.User);
 
         string chatRoomId = await _chatService.ConnectToChatRoomAsync(user, request.OtherUserId, request.WebSocket);
-
         await _chatService.HandleWebSocketMessagesAsync(request.WebSocket, chatRoomId, _dbcontext);
 
         return new InitiateChatResponse(true, "Connection established.");

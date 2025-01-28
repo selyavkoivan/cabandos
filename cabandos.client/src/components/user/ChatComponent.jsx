@@ -8,9 +8,14 @@ class ChatComponent extends Component {
         this.state = {
             websocket: null,
             isConnected: false,
-            messages: [], 
+            messages: [],
             message: '',
+            isLoading: false,
+            hasMoreMessages: true,
+            scrollPosition: 0,
+            loadCount: 10,
         };
+        this.messagesEndRef = React.createRef();
     }
 
     componentDidMount() {
@@ -21,19 +26,7 @@ class ChatComponent extends Component {
             return;
         }
 
-        fetch(`/api/chat/history/${otherUserId}`, {method: 'GET'})
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch chat history');
-                }
-                return response.json();
-            })
-            .then((messages) => {
-                this.setState({ messages });
-            })
-            .catch((error) => {
-                console.error('Error loading chat history:', error);
-            });
+        this.loadMessages(otherUserId, this.state.loadCount); 
 
         const ws = new WebSocket(`wss://localhost:7045/api/chat/${otherUserId}`);
 
@@ -48,7 +41,7 @@ class ChatComponent extends Component {
 
             this.setState((prevState) => ({
                 messages: [...prevState.messages, parsedMessage],
-            }));
+            }), this.scrollToBottom);
         };
 
         ws.onclose = () => {
@@ -70,6 +63,52 @@ class ChatComponent extends Component {
         }
     }
 
+    loadMessages = (otherUserId) => {
+        const { messages } = this.state;
+
+        this.setState({ isLoading: true });
+
+        const chatMessagesDiv = document.querySelector('.chat-messages');
+        const previousScrollHeight = chatMessagesDiv.scrollHeight;
+
+        fetch(`/api/chat/history/${otherUserId}?skip=${messages.length}&take=${this.state.loadCount}`, { method: 'GET' })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch chat history');
+                }
+                return response.json();
+            })
+            .then((newMessages) => {
+                this.setState(
+                    (prevState) => ({
+                        messages: [...newMessages.reverse(), ...prevState.messages],
+                        hasMoreMessages: newMessages.length === this.state.loadCount,
+                        isLoading: false,
+                    }),
+                    () => {
+                        const newScrollHeight = chatMessagesDiv.scrollHeight;
+                        chatMessagesDiv.scrollTop = newScrollHeight - previousScrollHeight;
+                    }
+                );
+            })
+            .catch((error) => {
+                console.error('Error loading chat history:', error);
+                this.setState({ isLoading: false });
+            });
+    };
+
+
+    handleScroll = (e) => {
+        const { scrollTop } = e.target;
+        const { hasMoreMessages, isLoading } = this.state;
+
+        if (scrollTop === 0 && hasMoreMessages && !isLoading) {
+            const { otherUserId } = this.props;
+            this.loadMessages(otherUserId, 10);
+        }
+    };
+
+
     handleMessageChange = (e) => {
         this.setState({ message: e.target.value });
     };
@@ -82,20 +121,26 @@ class ChatComponent extends Component {
             const messageObject = {
                 message: message.trim(),
                 sentAt: new Date().toISOString(),
-                fromUserId: me.user.id, 
-                toUserId: otherUserId, 
+                fromUserId: me.user.id,
+                toUserId: otherUserId,
             };
             websocket.send(JSON.stringify(messageObject));
 
             this.setState((prevState) => ({
                 messages: [...prevState.messages, messageObject],
                 message: '',
-            }));
+            }), this.scrollToBottom);
+        }
+    };
+
+    scrollToBottom = () => {
+        if (this.messagesEndRef.current) {
+            this.messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     };
 
     render() {
-        const { messages, message, isConnected } = this.state;
+        const { messages, message, isConnected, isLoading } = this.state;
         const { me } = this.props;
 
         return (
@@ -104,12 +149,16 @@ class ChatComponent extends Component {
                     <h2>Chat</h2>
                 </div>
 
-                <div className="chat-messages">
+                <div
+                    className="chat-messages"
+                    onScroll={this.handleScroll}
+                >
+                    {isLoading && <div className="loading-indicator">Loading...</div>}
+
                     {messages.map((msg, index) => (
                         <div
                             key={index}
-                            className={`chat-message ${msg.fromUserId === me.user.id ? 'chat-message-own' : '' 
-                                }`}
+                            className={`chat-message ${msg.fromUserId === me.user.id ? 'chat-message-own' : ''}`}
                         >
                             <div className="chat-message-meta">
                                 <span className="chat-message-time">
@@ -126,6 +175,7 @@ class ChatComponent extends Component {
                             </div>
                         </div>
                     ))}
+                    <div ref={this.messagesEndRef} />
                 </div>
 
                 <div className="chat-input-container row">
@@ -134,14 +184,14 @@ class ChatComponent extends Component {
                         value={message}
                         onChange={(e) => {
                             this.handleMessageChange(e);
-                            e.target.style.height = 'auto'; 
-                            e.target.style.height = `${e.target.scrollHeight}px`; 
+                            e.target.style.height = 'auto';
+                            e.target.style.height = `${e.target.scrollHeight}px`;
                         }}
                         placeholder="Type a message..."
-                        rows={1} 
+                        rows={1}
                         style={{
-                            maxHeight: '6em', 
-                            overflow: 'hidden', 
+                            maxHeight: '6em',
+                            overflow: 'hidden',
                         }}
                     />
                     <button

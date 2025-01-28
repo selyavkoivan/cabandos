@@ -38,15 +38,16 @@ public class ChatController : ControllerBase
 
 
     [HttpGet("history/{otherUserId}")]
-    public async Task<IActionResult> GetChatHistory(string otherUserId)
+    public async Task<IActionResult> GetChatHistory(string otherUserId, [FromQuery] int skip = 0, [FromQuery] int take = 5)
     {
-        var result = await _mediator.Send(new GetChatHistoryQuery(HttpContext.User, otherUserId));
+        var query = new GetChatHistoryQuery(User, otherUserId, skip, take);
+        var response = await _mediator.Send(query);
 
-        if (!result.Success)
+        if (!response.Success)
         {
-            return BadRequest(result.Message);
+            return BadRequest(response.Message);
         }
 
-        return Ok(result.Messages);
+        return Ok(response.Messages);
     }
 }
