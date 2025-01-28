@@ -26,7 +26,7 @@ class ChatComponent extends Component {
             return;
         }
 
-        this.loadMessages(otherUserId, this.state.loadCount); 
+        this.loadMessages(otherUserId, this.state.loadCount);
 
         const ws = new WebSocket(`wss://localhost:7045/api/chat/${otherUserId}`);
 
@@ -97,7 +97,6 @@ class ChatComponent extends Component {
             });
     };
 
-
     handleScroll = (e) => {
         const { scrollTop } = e.target;
         const { hasMoreMessages, isLoading } = this.state;
@@ -107,7 +106,6 @@ class ChatComponent extends Component {
             this.loadMessages(otherUserId, 10);
         }
     };
-
 
     handleMessageChange = (e) => {
         this.setState({ message: e.target.value });
@@ -143,11 +141,19 @@ class ChatComponent extends Component {
         const { messages, message, isConnected, isLoading } = this.state;
         const { me } = this.props;
 
+        const formatDate = (date) => {
+            return new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
+        };
+
+        let lastMessageDate = null;
+
         return (
             <div className="chat-wrapper">
-                <div className="chat-header">
-                    <h2>Chat</h2>
-                </div>
+                <h2>Chat</h2>
 
                 <div
                     className="chat-messages"
@@ -155,32 +161,90 @@ class ChatComponent extends Component {
                 >
                     {isLoading && <div className="loading-indicator">Loading...</div>}
 
-                    {messages.map((msg, index) => (
-                        <div
-                            key={index}
-                            className={`chat-message ${msg.fromUserId === me.user.id ? 'chat-message-own' : ''}`}
-                        >
-                            <div className="chat-message-meta">
-                                <span className="chat-message-time">
-                                    {new Date(msg.sentAt).toLocaleTimeString()}
-                                </span>
+                    {messages.map((msg, index) => {
+                        const isOwnMessage = msg.fromUserId === me.user.id;
+
+                        const previousMessage = messages[index - 1];
+                        const nextMessage = messages[index + 1];
+
+                        const currentMessageDate = formatDate(msg.sentAt);
+
+                        const showDateSeparator = lastMessageDate !== currentMessageDate;
+
+                        lastMessageDate = currentMessageDate;
+
+                        var shouldAddMarginTop = false;
+                        var showArrowForOwn = false;
+                        var showArrowForOther = false;
+
+
+                        if (nextMessage && nextMessage.fromUserId !== msg.fromUserId) {
+                            if (isOwnMessage) {
+                                showArrowForOwn = true;
+                            } else {
+                                showArrowForOther = true;
+                            }
+                        } else {
+                            const timeDifferenceOld = previousMessage
+                                ? (new Date(msg.sentAt) - new Date(previousMessage.sentAt)) / 1000
+                                : null;
+                            const timeDifferenceNew = nextMessage
+                                ? (new Date(nextMessage.sentAt) - new Date(msg.sentAt)) / 1000
+                                : null;
+
+                            shouldAddMarginTop = timeDifferenceOld && timeDifferenceOld > 60;
+
+                            const isLastMessage = index === messages.length - 1;
+
+                            showArrowForOwn = isOwnMessage && (isLastMessage || timeDifferenceNew > 60);
+                            showArrowForOther = !isOwnMessage && (isLastMessage || timeDifferenceNew > 60);
+                        }
+
+                        return (
+                            <div key={index}>
+                                {showDateSeparator && (
+                                    <div className="date-separator">
+                                        {currentMessageDate}
+                                    </div>
+                                )}
+                                <div
+                                    className={`chat-message-wrapper ${isOwnMessage ? 'own' : ''}`}
+                                    style={shouldAddMarginTop ? { marginTop: '10px' } : { marginTop: '2px' }}
+                                >
+                                    <div
+                                        className={`chat-message ${isOwnMessage ? 'chat-message-own' : ''}`}
+                                    >
+                                        {showArrowForOwn && (
+                                            <div className="message-arrow own"></div> 
+                                        )}
+
+                                        {showArrowForOther && (
+                                            <div className="message-arrow other"></div> 
+                                        )}
+
+                                        <div className="chat-message-text">
+                                            {msg.message.split('\n').map((line, i) => (
+                                                <React.Fragment key={i}>
+                                                    {line}
+                                                    <br />
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+                                        <div className="chat-message-meta">
+                                            {new Date(msg.sentAt).toLocaleTimeString()}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="chat-message-text">
-                                {msg.message.split('\n').map((line, i) => (
-                                    <React.Fragment key={i}>
-                                        {line}
-                                        <br />
-                                    </React.Fragment>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+
+                        );
+                    })}
                     <div ref={this.messagesEndRef} />
                 </div>
 
-                <div className="chat-input-container row">
+                <div className="chat-input-container">
                     <textarea
-                        className="chat-input col-11"
+                        className="chat-input"
                         value={message}
                         onChange={(e) => {
                             this.handleMessageChange(e);
@@ -195,7 +259,7 @@ class ChatComponent extends Component {
                         }}
                     />
                     <button
-                        className="chat-send-button col-1"
+                        className="chat-send-button"
                         onClick={this.handleMessageSend}
                         disabled={!isConnected || !message.trim()}
                     >
@@ -205,6 +269,9 @@ class ChatComponent extends Component {
             </div>
         );
     }
+
+
+
 }
 
 const mapStateToProps = (state) => ({
