@@ -1,119 +1,79 @@
 ﻿import React, { Component } from 'react';
 import '../../assets/styles/Chat.css';
 import { connect } from 'react-redux';
+import {
+    fetchChatHistoryAsync,
+    sendMessageAsync,
+    setMessage,
+    setWebSocket,
+    setIsConnected,
+    addMessage,
+    setScrollPosition,
+} from '../../redux/slice/chat/chatSlice';
 
 class ChatComponent extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            websocket: null,
-            isConnected: false,
-            messages: [],
-            message: '',
-            isLoading: false,
-            hasMoreMessages: true,
-            scrollPosition: 0,
-            loadCount: 10,
-        };
         this.messagesEndRef = React.createRef();
     }
 
     componentDidMount() {
-        const { otherUserId, me } = this.props;
+        const { otherUserId, me, websocket, fetchChatHistoryAsync, setWebSocket, setIsConnected, addMessage } = this.props;
 
         if (!me || !me.user.id) {
             console.error('User data is missing.');
             return;
         }
 
-        this.loadMessages(otherUserId, this.state.loadCount);
+        fetchChatHistoryAsync({ otherUserId, skip: 0, take: this.props.loadCount });
 
         const ws = new WebSocket(`wss://localhost:7045/api/chat/${otherUserId}`);
-
         ws.onopen = () => {
             console.log('WebSocket connection opened.');
-            this.setState({ isConnected: true });
+            setIsConnected(true);
         };
-
         ws.onmessage = (event) => {
             const parsedMessage = JSON.parse(event.data);
             console.log('Message from server:', parsedMessage);
-
-            this.setState((prevState) => ({
-                messages: [...prevState.messages, parsedMessage],
-            }), this.scrollToBottom);
+            addMessage(parsedMessage);
+            this.scrollToBottom();
         };
-
         ws.onclose = () => {
             console.log('WebSocket connection closed.');
-            this.setState({ isConnected: false });
+            setIsConnected(false);
         };
-
         ws.onerror = (error) => {
             console.error('WebSocket error:', error);
         };
 
-        this.setState({ websocket: ws });
+        setWebSocket(ws);
+
+        this.scrollToBottom();
     }
 
     componentWillUnmount() {
-        const { websocket } = this.state;
+        const { websocket } = this.props;
         if (websocket && websocket.readyState === WebSocket.OPEN) {
             websocket.close();
         }
     }
 
-    loadMessages = (otherUserId) => {
-        const { messages } = this.state;
-
-        this.setState({ isLoading: true });
-
-        const chatMessagesDiv = document.querySelector('.chat-messages');
-        const previousScrollHeight = chatMessagesDiv.scrollHeight;
-
-        fetch(`/api/chat/history/${otherUserId}?skip=${messages.length}&take=${this.state.loadCount}`, { method: 'GET' })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch chat history');
-                }
-                return response.json();
-            })
-            .then((newMessages) => {
-                this.setState(
-                    (prevState) => ({
-                        messages: [...newMessages.reverse(), ...prevState.messages],
-                        hasMoreMessages: newMessages.length === this.state.loadCount,
-                        isLoading: false,
-                    }),
-                    () => {
-                        const newScrollHeight = chatMessagesDiv.scrollHeight;
-                        chatMessagesDiv.scrollTop = newScrollHeight - previousScrollHeight;
-                    }
-                );
-            })
-            .catch((error) => {
-                console.error('Error loading chat history:', error);
-                this.setState({ isLoading: false });
-            });
-    };
-
     handleScroll = (e) => {
         const { scrollTop } = e.target;
-        const { hasMoreMessages, isLoading } = this.state;
+        const { hasMoreMessages, isLoading, fetchChatHistoryAsync, otherUserId, setScrollPosition } = this.props;
 
         if (scrollTop === 0 && hasMoreMessages && !isLoading) {
-            const { otherUserId } = this.props;
-            this.loadMessages(otherUserId, 10);
+            fetchChatHistoryAsync({ otherUserId, skip: this.props.messages.length, take: this.props.loadCount });
         }
+        setScrollPosition(scrollTop);
     };
 
     handleMessageChange = (e) => {
-        this.setState({ message: e.target.value });
+        this.props.setMessage(e.target.value);
     };
 
     handleMessageSend = () => {
-        const { websocket, isConnected, message } = this.state;
-        const { otherUserId, me } = this.props;
+        const { websocket, isConnected, message, otherUserId, me, sendMessageAsync } = this.props;
 
         if (websocket && isConnected && message.trim()) {
             const messageObject = {
@@ -122,12 +82,9 @@ class ChatComponent extends Component {
                 fromUserId: me.user.id,
                 toUserId: otherUserId,
             };
-            websocket.send(JSON.stringify(messageObject));
-
-            this.setState((prevState) => ({
-                messages: [...prevState.messages, messageObject],
-                message: '',
-            }), this.scrollToBottom);
+            sendMessageAsync({ messageObject, websocket });
+            this.props.setMessage('');
+            this.scrollToBottom();
         }
     };
 
@@ -138,8 +95,7 @@ class ChatComponent extends Component {
     };
 
     render() {
-        const { messages, message, isConnected, isLoading } = this.state;
-        const { me } = this.props;
+        const { messages, message, isLoading, me } = this.props;
 
         const formatDate = (date) => {
             return new Date(date).toLocaleDateString('en-US', {
@@ -155,28 +111,21 @@ class ChatComponent extends Component {
             <div className="chat-wrapper">
                 <h2>Chat</h2>
 
-                <div
-                    className="chat-messages"
-                    onScroll={this.handleScroll}
-                >
+                <div className="chat-messages" onScroll={this.handleScroll}>
                     {isLoading && <div className="loading-indicator">Loading...</div>}
 
                     {messages.map((msg, index) => {
                         const isOwnMessage = msg.fromUserId === me.user.id;
-
                         const previousMessage = messages[index - 1];
                         const nextMessage = messages[index + 1];
 
                         const currentMessageDate = formatDate(msg.sentAt);
-
                         const showDateSeparator = lastMessageDate !== currentMessageDate;
-
                         lastMessageDate = currentMessageDate;
 
                         var shouldAddMarginTop = false;
                         var showArrowForOwn = false;
                         var showArrowForOther = false;
-
 
                         if (nextMessage && nextMessage.fromUserId !== msg.fromUserId) {
                             if (isOwnMessage) {
@@ -202,26 +151,11 @@ class ChatComponent extends Component {
 
                         return (
                             <div key={index}>
-                                {showDateSeparator && (
-                                    <div className="date-separator">
-                                        {currentMessageDate}
-                                    </div>
-                                )}
-                                <div
-                                    className={`chat-message-wrapper ${isOwnMessage ? 'own' : ''}`}
-                                    style={shouldAddMarginTop ? { marginTop: '10px' } : { marginTop: '2px' }}
-                                >
-                                    <div
-                                        className={`chat-message ${isOwnMessage ? 'chat-message-own' : ''}`}
-                                    >
-                                        {showArrowForOwn && (
-                                            <div className="message-arrow own"></div> 
-                                        )}
-
-                                        {showArrowForOther && (
-                                            <div className="message-arrow other"></div> 
-                                        )}
-
+                                {showDateSeparator && <div className="date-separator">{currentMessageDate}</div>}
+                                <div className={`chat-message-wrapper ${isOwnMessage ? 'own' : ''}`} style={shouldAddMarginTop ? { marginTop: '10px' } : { marginTop: '2px' }}>
+                                    <div className={`chat-message ${isOwnMessage ? 'chat-message-own' : ''}`}>
+                                        {showArrowForOwn && <div className="message-arrow own"></div>}
+                                        {showArrowForOther && <div className="message-arrow other"></div>}
                                         <div className="chat-message-text">
                                             {msg.message.split('\n').map((line, i) => (
                                                 <React.Fragment key={i}>
@@ -236,7 +170,6 @@ class ChatComponent extends Component {
                                     </div>
                                 </div>
                             </div>
-
                         );
                     })}
                     <div ref={this.messagesEndRef} />
@@ -246,11 +179,7 @@ class ChatComponent extends Component {
                     <textarea
                         className="chat-input"
                         value={message}
-                        onChange={(e) => {
-                            this.handleMessageChange(e);
-                            e.target.style.height = 'auto';
-                            e.target.style.height = `${e.target.scrollHeight}px`;
-                        }}
+                        onChange={this.handleMessageChange}
                         placeholder="Type a message..."
                         rows={1}
                         style={{
@@ -261,7 +190,7 @@ class ChatComponent extends Component {
                     <button
                         className="chat-send-button"
                         onClick={this.handleMessageSend}
-                        disabled={!isConnected || !message.trim()}
+                        disabled={!message.trim()}
                     >
                         ➤
                     </button>
@@ -269,13 +198,27 @@ class ChatComponent extends Component {
             </div>
         );
     }
-
-
-
 }
 
 const mapStateToProps = (state) => ({
+    messages: state.chat.messages,
+    isLoading: state.chat.isLoading,
+    websocket: state.chat.websocket,
+    message: state.chat.message,
+    hasMoreMessages: state.chat.hasMoreMessages,
+    loadCount: state.chat.loadCount,
+    isConnected: state.chat.isConnected,
     me: state.user.me,
 });
 
-export default connect(mapStateToProps, null)(ChatComponent);
+const mapDispatchToProps = {
+    fetchChatHistoryAsync,
+    sendMessageAsync,
+    setMessage,
+    setWebSocket,
+    setIsConnected,
+    addMessage,
+    setScrollPosition,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatComponent);
