@@ -28,8 +28,8 @@ export const fetchUserByUsernameAsync = createAsyncThunk(
 
 export const fetchMeAsync = createAsyncThunk(
     'user/fetchMe',
-    async () => {
-        const data = await userApi.fetchMe();
+    async (searchUserDTO) => {
+        const data = await userApi.fetchMe(searchUserDTO);
         return data;
     }
 );
@@ -69,9 +69,10 @@ export const uploadUserPhotoAsync = createAsyncThunk(
 
 const initialState = {
     users: [],
-    currentUser: null,
+    targetUser: null,
     loading: false,
     error: null,
+    me: null,
 };
 
 const userSlice = createSlice({
@@ -110,7 +111,7 @@ const userSlice = createSlice({
             })
             .addCase(fetchUserByUsernameAsync.fulfilled, (state, action) => {
                 state.loading = false;
-                state.currentUser = action.payload;
+                state.targerUser = action.payload;
             })
             .addCase(fetchUserByUsernameAsync.rejected, (state, action) => {
                 state.loading = false;
@@ -122,7 +123,7 @@ const userSlice = createSlice({
             })
             .addCase(fetchMeAsync.fulfilled, (state, action) => {
                 state.loading = false;
-                state.currentUser = action.payload;
+                state.me = action.payload;
             })
             .addCase(fetchMeAsync.rejected, (state, action) => {
                 state.loading = false;

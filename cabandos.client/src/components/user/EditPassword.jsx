@@ -72,14 +72,14 @@ class EditPassword extends React.Component {
 
         const { inputs } = this.state;
 
-        const { currentUser } = this.props;
+        const { targetUser } = this.props;
         const passwordDTO = {
             SignInPassword: inputs.OldPassword.value,
             Password: inputs.NewPassword.value,
             RepeatedPassword: inputs.RepeatedNewPassword.value,
         };
 
-        this.props.editUserPasswordAsync({ passwordDTO, username: currentUser.user.userName })
+        this.props.editUserPasswordAsync({ passwordDTO, username: targetUser.user.userName })
     };
 
     handleCancel = () => {
@@ -137,7 +137,7 @@ class EditPassword extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    currentUser: state.user.currentUser,
+    targetUser: state.user.targetUser,
 });
 
 const mapDispatchToProps = {
