@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { taskApi } from './taskApi'; 
 
+import allowedMoves from '../../../assets/allowedMoves.json';
 
 export const fetchTasksByStatusAsync = createAsyncThunk(
     'task/fetchTasksByStatus',
@@ -36,7 +37,9 @@ export const deleteTaskAsync = createAsyncThunk(
 );
 
 const initialState = {
-    tasksGroup: []
+    tasksGroup: [],
+    addingTaskStatus: false,
+    allowedMoves,
 };
 
 const taskSlice = createSlice({
