@@ -53,7 +53,8 @@ const taskSlice = createSlice({
                 state.tasksGroup = action.payload;
             })
             .addCase(addTaskAsync.fulfilled, (state, action) => {
-                const taskDTO = action.payload;
+                var taskDTO = action.payload;
+                taskDTO.user = sessionStorage.getItem('me') && JSON.parse(sessionStorage.getItem('me'));
                 const tasks = state.tasksGroup[Math.ceil(taskDTO.status / 10)].tasks.find(t => t.status == taskDTO.status).tasks;
                 tasks.push(taskDTO);
             })
