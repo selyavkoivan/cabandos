@@ -1,14 +1,23 @@
-import Board  from "./components/kanban/Board";
-import SignIn from "./components/auth/SignIn"
-import SignUp from "./components/auth/SignUp"
-import Users from "./components/user/Users"
-import Profile from "./components/user/Profile"
+import { useSelector } from "react-redux";
+import { Routes, Route, Navigate } from "react-router-dom";
+import ProtectedRoute from "./components/shared/ProtectedRoute";
 
+import Board from "./components/kanban/Board";
+import SignIn from "./components/auth/SignIn";
+import SignUp from "./components/auth/SignUp";
+import Users from "./components/user/Users";
+import Profile from "./components/user/Profile";
+
+const PrivateRoute = ({ element }) => {
+    const isLogin = useSelector((state) => state.auth.isLogin || sessionStorage.getItem('isLogin'));
+
+    return isLogin ? element : <Navigate to="/signin" />;
+};
 
 const AppRoutes = [
     {
         index: true,
-        element: <Board />
+        element: <PrivateRoute element={<Board />} />
     },
     {
         path: '/signin',
@@ -24,11 +33,11 @@ const AppRoutes = [
     },
     {
         path: '/users',
-        element: <Users />
+        element: <PrivateRoute element={<Users />} />
     },
     {
         path: '/profile/*',
-        element: <Profile />
+        element: <PrivateRoute element={<Profile />} />
     },
 ];
 
