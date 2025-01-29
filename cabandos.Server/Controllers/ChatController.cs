@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace cabandos.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/chat")]
 public class ChatController : ControllerBase

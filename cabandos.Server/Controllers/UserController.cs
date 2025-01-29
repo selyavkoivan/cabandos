@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace cabandos.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/user")]
 public class UserController : ControllerBase
