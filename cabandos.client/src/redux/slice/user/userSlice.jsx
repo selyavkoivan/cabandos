@@ -30,6 +30,7 @@ export const fetchMeAsync = createAsyncThunk(
     'user/fetchMe',
     async (searchUserDTO) => {
         const data = await userApi.fetchMe(searchUserDTO);
+        sessionStorage.setItem('me', JSON.stringify(data)); 
         return data;
     }
 );
@@ -72,7 +73,7 @@ const initialState = {
     targetUser: null,
     loading: false,
     error: null,
-    me: null,
+    me: JSON.parse(sessionStorage.getItem('me')) || null,
 };
 
 const userSlice = createSlice({
@@ -124,10 +125,12 @@ const userSlice = createSlice({
             .addCase(fetchMeAsync.fulfilled, (state, action) => {
                 state.loading = false;
                 state.me = action.payload;
+                sessionStorage.setItem('me', JSON.stringify(action.payload));
             })
             .addCase(fetchMeAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                sessionStorage.removeItem('me'); 
             })
             .addCase(editUserAsync.pending, (state) => {
                 state.loading = true;
