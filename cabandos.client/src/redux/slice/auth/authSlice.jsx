@@ -75,6 +75,7 @@ const authSlice = createSlice({
             .addCase(logoutAsync.fulfilled, (state, action) => {
                 state.isLogin = false;
                 sessionStorage.setItem('isLogin', false);
+                sessionStorage.setItem('me', null);
                 NotificationManager.showInfo('Logout successed');
             });
     },

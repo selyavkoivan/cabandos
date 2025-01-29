@@ -22,8 +22,12 @@ class BoardColumn extends Component {
         this.handleToggleAdd();
     };
 
-    handleMoveTask = (task, toStatus) => {
-        this.props.onMoveTask({ ...task, status: toStatus }); 
+    handleMoveTask = (task, toStatus, forceMove = false) => {
+        const { allowedMoves } = this.props;
+
+        if (forceMove || (allowedMoves[task.status] && allowedMoves[task.status].includes(toStatus))) {
+            this.props.onMoveTask(task, toStatus);
+        }
     };
 
     handleDragOver = (event) => {
@@ -32,7 +36,8 @@ class BoardColumn extends Component {
 
     handleDrop = (event) => {
         const taskData = JSON.parse(event.dataTransfer.getData('text/plain'));
-        this.props.onMoveTask(taskData, this.props.tasksItem.status);
+        const forceMove = event.shiftKey;
+        this.handleMoveTask(taskData, this.props.tasksItem.status, forceMove);
     };
 
     handleToggleAdd = () => {
@@ -79,12 +84,14 @@ class BoardColumn extends Component {
 
 const mapStateToProps = (state) => ({
     isAdding: state.task.addingTaskStatus,
+    allowedMoves: state.task.allowedMoves,
 });
+
 
 const mapDispatchToProps = {
     deleteTaskAsync,  
     addTaskAsync,    
-    moveTaskAsync
+    moveTaskAsync,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BoardColumn);

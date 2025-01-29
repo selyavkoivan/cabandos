@@ -18,6 +18,7 @@ class Task extends Component {
 
     render() {
         const { task, isFreezed } = this.props;
+
         return (
             <Card key={task.id} className="m-1 hoverable">
                 <CardTitle
@@ -54,11 +55,22 @@ class Task extends Component {
                     )}
                     <CardText
                         className={`p-2 mb-2 text-center card-text status ${task.status !== undefined && `status-${task.status}`}`}
-
-
                     >
                         Status: {task.status}
                     </CardText>
+                    {task.user && task.user.avatarUrl && task.user.userName && (
+                        <CardText className="p-2 mb-2 text-center card-text user-info">
+                            <a href={`/profile/${task.user.userName}`} className="d-flex align-items-center justify-content-center">
+                                <img
+                                    src={task.user.avatarUrl}
+                                    alt={task.user.userName}
+                                    className="rounded-circle"
+                                    style={{ width: '30px', height: '30px', marginRight: '10px' }}
+                                />
+                                <span>{task.user.userName}</span>
+                            </a>
+                        </CardText>
+                    )}
                 </CardBody>
             </Card>
         );

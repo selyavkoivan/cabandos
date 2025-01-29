@@ -19,7 +19,7 @@ const PrivateRoute = ({ element }) => {
 const AppRoutes = [
     {
         index: true,
-        element: <PrivateRoute element={<Board />} />
+        element: <Board />
     },
     {
         path: '/signin',
@@ -39,7 +39,7 @@ const AppRoutes = [
     },
     {
         path: '/profile/*',
-        element: <PrivateRoute element={<Profile />} />
+        element: <Profile />
     },
     {
         path: '/protected',

@@ -21,7 +21,9 @@ public class GetTasksByStatusHandler : IRequestHandler<GetTasksByStatusQuery, Li
                 group => group.Key,
                 group => group.ToArray()
             );
-        var tasks = _context.Tasks.Include(t => t.User).ToList();
+        var tasks = await _context.Tasks
+            .Include(t => t.User)  
+            .ToListAsync();
 
         var groupedTasks = groupedStatuses.Select(statusGroup => new
         {
@@ -30,7 +32,19 @@ public class GetTasksByStatusHandler : IRequestHandler<GetTasksByStatusQuery, Li
             Tasks = statusGroup.Value.Select(status => new
             {
                 Status = (int)status,
-                Tasks = tasks.Where(t => t.Status == status).ToList(),
+                Tasks = tasks.Where(t => t.Status == status).Select(t => new
+                {
+                    t.Id,
+                    t.Name,
+                    t.Description,
+                    t.Status,
+                    User = new
+                    {
+                        t.User?.Id,
+                        t.User?.UserName,
+                        t.User?.AvatarUrl,
+                    }
+                }).ToList(),
                 IsLeaf = true
             }).OrderBy(group => group.Status)
             .ToList()
