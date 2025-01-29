@@ -32,9 +32,9 @@ class Profile extends React.Component {
     };
 
     render() {
-        const { userData, loading, error } = this.props;
+        const { userData, loading, error, isLogin, me } = this.props;
         const { isEdit, showChat } = this.state;
-        
+
         if (loading) {
             return <div>Loading...</div>;
         }
@@ -46,7 +46,7 @@ class Profile extends React.Component {
         if (!userData) {
             return null;
         }
-        
+
         return (
             <Container className="mt-5">
                 <Row className="profile-row">
@@ -62,12 +62,13 @@ class Profile extends React.Component {
                                     {userData.user.userName}
                                 </h6>
                                 <hr />
-                                <Button variant="primary" onClick={this.toggleEdit}>
+                                {(isLogin && me && me.user.id === userData.user.id) && <Button variant="primary" onClick={this.toggleEdit}>
                                     <FontAwesomeIcon icon={faPenToSquare} /> Edit Profile
                                 </Button>
-                                <Button variant="primary" onClick={this.toggleChat} className="mt-2">
+                                }
+                                {isLogin && <Button variant="primary" onClick={this.toggleChat} className="mt-2">
                                     {showChat ? 'Hide Chat' : 'Open Chat'}
-                                </Button>
+                                </Button>}
                             </div>
                         </div>
                     </Col>
@@ -128,6 +129,8 @@ const mapStateToProps = (state) => ({
     userData: state.user.targerUser,
     loading: state.user.loading,
     error: state.user.error,
+    isLogin: state.auth.isLogin,
+    me: state.user.me,
 });
 
 const mapDispatchToProps = {

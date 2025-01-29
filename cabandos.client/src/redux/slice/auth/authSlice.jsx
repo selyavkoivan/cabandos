@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authApi } from './authApi';
-import NotificationManager from '../../../components/shared/notifications/NotificationManager'
+import NotificationManager from '../../../components/shared/notifications/NotificationManager';
 
 export const signInAsync = createAsyncThunk(
     'auth/signInAsync',
@@ -29,19 +29,18 @@ export const isLoginAsync = createAsyncThunk(
     async () => {
         return await authApi.isLogin();
     }
-)
+);
 
 export const logoutAsync = createAsyncThunk(
     'auth/logout',
     async () => {
         return await authApi.logout();
     }
-)
+);
 
 const initialState = {
-    isLogin: JSON.parse(localStorage.getItem('isLogin')) || false,
+    isLogin: JSON.parse(sessionStorage.getItem('isLogin')) || false,
 };
-
 
 const authSlice = createSlice({
     name: 'auth',
@@ -50,34 +49,34 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(signInAsync.fulfilled, (state, action) => {
-                state.isLogin = true
-                localStorage.setItem('isLogin', true);
+                state.isLogin = true;
+                sessionStorage.setItem('isLogin', true);
 
-                localStorage.setItem('successedMessage', 'Sign in successed');
+                sessionStorage.setItem('successedMessage', 'Sign in successed');
                 window.location.replace('/');
             })
             .addCase(signInAsync.rejected, (state, action) => {
-                state.isLogin = false
-                localStorage.setItem('isLogin', false);
+                state.isLogin = false;
+                sessionStorage.setItem('isLogin', false);
 
                 NotificationManager.showError(action.payload.detail);
             })
             .addCase(signUpAsync.fulfilled, (state, action) => {
-                localStorage.setItem('successedMessage', 'Sign up successed');
+                sessionStorage.setItem('successedMessage', 'Sign up successed');
                 window.location.replace('/signin');
             })
             .addCase(signUpAsync.rejected, (state, action) => {
                 NotificationManager.showError(action.payload.detail);
             })
             .addCase(isLoginAsync.fulfilled, (state, action) => {
-                state.isLogin = action.payload
-                localStorage.setItem('isLogin', action.payload);
+                state.isLogin = action.payload;
+                sessionStorage.setItem('isLogin', action.payload);
             })
             .addCase(logoutAsync.fulfilled, (state, action) => {
-                state.isLogin = false
-                localStorage.setItem('isLogin', false);
-                NotificationManager.showInfo("Logout successed");
-            })
+                state.isLogin = false;
+                sessionStorage.setItem('isLogin', false);
+                NotificationManager.showInfo('Logout successed');
+            });
     },
 });
 
