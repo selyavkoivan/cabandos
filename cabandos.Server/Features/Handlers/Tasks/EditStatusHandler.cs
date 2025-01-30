@@ -30,9 +30,10 @@ public class EditStatusHandler : IRequestHandler<EditStatusCommand>
         }
 
         task.Status = request.TaskStatus;
+        var changeType = "StatusChange";
 
         var previousChange = await _context.TaskChanges
-        .Where(tc => tc.TaskId == task.Id)
+        .Where(tc => tc.TaskId == task.Id && tc.ChangeType == changeType)
         .OrderByDescending(tc => tc.ChangedAt)
         .FirstOrDefaultAsync(cancellationToken);
 
@@ -40,7 +41,7 @@ public class EditStatusHandler : IRequestHandler<EditStatusCommand>
 
         var taskChange = new TaskChange(
             taskId: task.Id,
-            changeType: "StatusChange",
+            changeType: changeType,
             changedAt: DateTime.UtcNow,
             changedByUserId: me?.Id,
             newValue: task.Status.ToString(),

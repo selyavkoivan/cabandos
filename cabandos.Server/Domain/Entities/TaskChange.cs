@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using CloudinaryDotNet.Core;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace cabandos.Server.Domain.Entities;
 
-public class TaskChange
+public class TaskChange: System.ICloneable
 {
     public Guid Id { get; set; }
 
@@ -22,12 +23,10 @@ public class TaskChange
 
     public string? UserId { get; set; }
 
-    [JsonIgnore]
     public User? User { get; set; }
 
     public Guid? PreviousChangeId { get; set; }
 
-    [JsonIgnore]
     [ForeignKey("PreviousChangeId")]
     public TaskChange? PreviousChange { get; set; }
 
@@ -42,5 +41,15 @@ public class TaskChange
         NewValue = newValue;
         ChangedAt = changedAt;
         PreviousChangeId = previousChangeId;
+    }
+
+    public object Clone()
+    {
+        var clone = this.MemberwiseClone() as TaskChange;
+
+        clone.User = this.User?.Clone() as User;
+        clone.PreviousChange = this.PreviousChange?.Clone() as TaskChange;
+
+        return clone;
     }
 }

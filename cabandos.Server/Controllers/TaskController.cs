@@ -49,8 +49,15 @@ public class TaskController : ControllerBase
     [HttpPost("EditTaskStatus")]
     public async Task<IActionResult> EditTaskStatus([FromBody] Task task)
     {
-        await _mediator.Send(new EditStatusCommand(task.Id, task.Status));
+        await _mediator.Send(new EditStatusCommand(task.Id, task.Status, HttpContext.User));
         return NoContent();
+    }
+
+    [HttpGet("GetTaskChanges/{taskId}")]
+    public async Task<IActionResult> EditTaskStatus(string taskId)
+    {
+        var result = await _mediator.Send(new GetTaskChangesQuery(taskId));
+        return Ok(result);
     }
 }
 
