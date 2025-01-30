@@ -1,6 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import { AiOutlineClose } from "react-icons/ai";
+import { selectTaskStatusText } from '../../redux/slice/task/taskSlice';
 import "../../assets/styles/Board.css";
 
 class Task extends Component {
@@ -54,9 +55,9 @@ class Task extends Component {
                         </CardText>
                     )}
                     <CardText
-                        className={`p-2 mb-2 text-center card-text status ${task.status !== undefined && `status-${task.status}`}`}
+                        className={`d-inline-block w-auto border rounded p-2 mb-2 text-center card-text status ${task.status !== undefined && `status-${task.status}`}`}
                     >
-                        Status: {task.status}
+                        Status: {selectTaskStatusText(task.status)}
                     </CardText>
                     {task.user && task.user.avatarUrl && task.user.userName && (
                         <CardText className="p-2 mb-2 text-center card-text user-info">

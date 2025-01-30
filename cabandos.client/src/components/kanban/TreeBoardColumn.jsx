@@ -25,7 +25,6 @@ class TreeBoardColumn extends Component {
                         flexWrap: 'wrap'
                     }}
                 >
-                    <h2>{treeNode.status}</h2>
                     {treeNode.tasks.length != 0 ?
                         treeNode.tasks.map((node) => (
                             this.renderTreeNode(node)

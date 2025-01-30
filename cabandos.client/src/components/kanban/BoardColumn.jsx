@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { deleteTaskAsync, moveTaskAsync, addTaskAsync } from '../../redux/slice/task/taskSlice';
+import { deleteTaskAsync, moveTaskAsync, addTaskAsync, selectTaskStatusText } from '../../redux/slice/task/taskSlice';
 import { Card, CardBody, CardTitle, Button } from 'reactstrap';
 import Task from './Task';
 import AddTask from './AddTask';
@@ -48,6 +48,10 @@ class BoardColumn extends Component {
         const { tasksItem } = this.props;
         const { isAdding } = this.state;
 
+        if (!tasksItem) {
+            return null;
+        }
+
         return (
             <Card
                 style={{ height: '100%' }}
@@ -55,7 +59,7 @@ class BoardColumn extends Component {
                 onDragOver={this.handleDragOver}
             >
                 <CardBody className="m-0 p-0">
-                    <CardTitle className="h1 text-center">{tasksItem.status}</CardTitle>
+                    <CardTitle className="h1 text-center">{selectTaskStatusText(tasksItem.status)}</CardTitle>
                     {tasksItem.status === 0 && (isAdding ? (
                         <AddTask onAddTask={this.handleAddTask} />
                     ) : (
@@ -90,7 +94,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
     deleteTaskAsync,  
-    addTaskAsync,    
+    addTaskAsync, 
     moveTaskAsync,
 };
 
