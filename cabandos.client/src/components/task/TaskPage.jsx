@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Card, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import { connect } from 'react-redux';
-import TaskChange from './TaskChange'; 
-import { fetchTaskByIdAsync } from '../../redux/slice/task/taskSlice';
+import TaskChangesTimeline from './TaskChange'; 
+import { fetchTaskChangesAsync } from '../../redux/slice/task/taskSlice';
 import { selectTaskStatusText } from '../../redux/slice/task/taskSlice';
 
 class TaskPage extends Component {
@@ -15,7 +15,7 @@ class TaskPage extends Component {
 
     componentDidMount() {
         const taskId = window.location.pathname.split('/').pop();
-        this.props.fetchTaskByIdAsync(taskId);
+        this.props.fetchTaskChangesAsync(taskId);
     }
 
     toggleHistory = () => {
@@ -23,7 +23,7 @@ class TaskPage extends Component {
     };
 
     render() {
-        const { task, taskChanges, loading, error } = this.props;
+        const { task, loading, error } = this.props;
         const { isHistoryVisible } = this.state;
 
         if (loading) {
@@ -63,12 +63,10 @@ class TaskPage extends Component {
                             </CardBody>
                         </Card>
 
-                        {isHistoryVisible && taskChanges && taskChanges.length > 0 && (
+                        {isHistoryVisible && task.taskChanges && task.taskChanges.length > 0 && (
                             <div className="task-history mt-4">
                                 <h5>History of Changes</h5>
-                                {taskChanges.map((change) => (
-                                    <TaskChange key={change.id} taskChange={change} />
-                                ))}
+                                <TaskChangesTimeline taskChanges={task.taskChanges} />
                             </div>
                         )}
                     </Col>
@@ -79,14 +77,13 @@ class TaskPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    task: state.task.selectedTask,
-    taskChanges: state.task.taskChanges,
+    task: state.task.taskChanges,
     loading: state.task.loading,
     error: state.task.error,
 });
 
 const mapDispatchToProps = {
-    fetchTaskByIdAsync,
+    fetchTaskChangesAsync,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TaskPage);

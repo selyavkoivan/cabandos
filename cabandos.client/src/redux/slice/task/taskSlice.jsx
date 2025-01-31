@@ -6,9 +6,13 @@ import taskStatusMap from "../../../assets/taskStatus.json";
 
 export const fetchTaskChangesAsync = createAsyncThunk(
     'task/fetchTaskChanges',
-    async (taskId) => {
-        const data = await taskApi.fetchTaskChanges(taskId);
-        return data;
+    async (taskId, { rejectWithValue }) => {
+        try {
+            const data = await taskApi.fetchTaskChanges(taskId);
+            return data;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
     }
 );
 
@@ -51,7 +55,9 @@ const initialState = {
     addingTaskStatus: false,
     allowedMoves,
     taskStatusMap,
-    taskChanges: [], 
+    taskChanges: null, 
+    loading: false,  
+    error: null,
 };
 
 const taskSlice = createSlice({
@@ -101,9 +107,18 @@ const taskSlice = createSlice({
                     tasks.splice(index, 1);
                 }
             })
+            .addCase(fetchTaskChangesAsync.pending, (state) => {
+                state.loading = true;  
+                state.error = null;    
+            })
             .addCase(fetchTaskChangesAsync.fulfilled, (state, action) => {
-                state.taskChanges = action.payload;
-            });
+                state.loading = false;         
+                state.taskChanges = action.payload; 
+            })
+            .addCase(fetchTaskChangesAsync.rejected, (state, action) => {
+                state.loading = false;         
+                state.error = action.payload; 
+            });;
     },
 });
 

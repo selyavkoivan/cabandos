@@ -6,6 +6,7 @@ import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import Users from "./components/user/Users";
 import Profile from "./components/user/Profile";
+import TaskPage from "./components/task/TaskPage";
 
 import ErrorPage from "./components/shared/ErrorRoute/ErrorPage";
 import ProtectedPage from "./components/shared/ErrorRoute/ProtectedPage";
@@ -40,6 +41,10 @@ const AppRoutes = [
     {
         path: '/profile/*',
         element: <Profile />
+    },
+    {
+        path: '/task/*',
+        element: <TaskPage />
     },
     {
         path: '/protected',
