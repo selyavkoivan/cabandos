@@ -26,12 +26,14 @@ class TaskChangesTimeline extends Component {
                     endTime: moment(currentChangeTime).toDate(),
                     changeType: change.changeType,
                     history,
+                    changes: [change], 
                 };
             } else {
                 const timeDiff = moment(currentChangeTime).diff(moment(currentGroup.endTime), "minutes");
                 if (timeDiff <= 60) {
                     currentGroup.history.push(change.newValue);
                     currentGroup.endTime = moment(currentChangeTime).toDate();
+                    currentGroup.changes.push(change); 
                 } else {
                     mergedChanges.push(currentGroup);
                     currentGroup = {
@@ -39,6 +41,7 @@ class TaskChangesTimeline extends Component {
                         endTime: moment(currentChangeTime).toDate(),
                         changeType: change.changeType,
                         history,
+                        changes: [change], 
                     };
                 }
             }
@@ -67,6 +70,7 @@ class TaskChangesTimeline extends Component {
                 original_end_time: moment(change.endTime).valueOf(),
                 changeType: change.changeType,
                 history: change.history,
+                changes: change.changes,
                 changeCount: change.history.length - 1,
             };
         });
@@ -107,10 +111,16 @@ class TaskChangesTimeline extends Component {
                             flexDirection: "column",
                             boxSizing: "border-box",
                         }}>
-                            <ChangeInfo history={item.history} timeRange={timeRange} changeCount={item.changeCount} />
+                            <ChangeInfo
+                                history={item.history}
+                                timeRange={timeRange}
+                                changeCount={item.changeCount}
+                                changes={item.changes}  
+                            />
                         </div>
                     );
                 }}
+
             />
         );
     }

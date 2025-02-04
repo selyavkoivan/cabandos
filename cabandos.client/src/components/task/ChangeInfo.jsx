@@ -1,19 +1,21 @@
-import React, { Component } from "react";
-import Timeline from "react-calendar-timeline";
-import "react-calendar-timeline/dist/style.css";
-import moment from "moment";
+﻿import React, { useState } from "react";
+import ChangeInfoModal from "./ChangeInfoModal";
 
-class ChangeInfo extends Component {
-    render() {
-        const { history, timeRange, changeCount } = this.props;
+const ChangeInfo = ({ history, timeRange, changeCount, changes }) => {
+    const [modalIsOpen, setModalIsOpen] = useState(false);
 
-        const displayHistory =
-            history.length > 2
-                ? `${history[0]} -> ... -> ${history[history.length - 1]}`
-                : history.join(" -> ");
+    const toggleModal = () => setModalIsOpen(!modalIsOpen);
 
-        return (
-            <div style={{
+    const displayHistory =
+        history.length > 2
+            ? `${history[0]} -> ... -> ${history[history.length - 1]}`
+            : history.join(" -> ");
+
+    return (
+        <div
+            onClick={toggleModal}
+            style={{
+                cursor: "pointer",
                 flexDirection: "column",
                 alignItems: "center",
                 padding: "10px",
@@ -21,13 +23,14 @@ class ChangeInfo extends Component {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
-            }}>
-                <strong>Changes: {changeCount}</strong>
-                <div>{displayHistory || "..."}</div>
-                <div><small>{timeRange}</small></div>
-            </div>
-        );
-    }
-}
+            }}
+        >
+            <strong>Changes: {changeCount}</strong>
+            <div>{displayHistory || "..."}</div>
+            <div><small>{timeRange}</small></div>
+            <ChangeInfoModal isOpen={modalIsOpen} toggle={toggleModal} changes={changes} />
+        </div>
+    );
+};
 
 export default ChangeInfo;

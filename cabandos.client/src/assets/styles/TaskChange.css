@@ -69,7 +69,6 @@
         padding: 10px;
     }
 
-    /* Применяем для правильного вертикального распределения */
     .timeline-item:nth-child(even) {
         align-self: flex-start;
     }
@@ -79,10 +78,9 @@
     }
 
     .timeline-item:not(:last-child) {
-        margin-bottom: 30px; /* Отступ между элементами */
+        margin-bottom: 30px; 
     }
 
-/* Для временной шкалы */
 .time-scale {
     display: flex;
     justify-content: space-between;
@@ -96,9 +94,14 @@
 
 .timeline-item {
     position: relative;
-    top: 30px; /* Позиционирование после временной шкалы */
+    top: 30px; 
 }
 
 .timeline-card {
-    max-width: 350px; /* Ограничиваем ширину карточки */
+    max-width: 350px; 
+}
+
+.task-card h3,
+.task-card .card-text {
+    text-align: left !important;
 }

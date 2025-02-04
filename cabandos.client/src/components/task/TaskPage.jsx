@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, CardBody, CardTitle, CardText, Button } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, CardTitle, CardText, Button, Spinner, Badge } from 'reactstrap';
 import { connect } from 'react-redux';
 import TaskChangesTimeline from './TaskChangesTimeline';
 import { fetchTaskChangesAsync, selectTaskStatusText, toggleHistory } from '../../redux/slice/task/taskSlice';
+import '../../assets/styles/TaskChange.css';
 
 class TaskPage extends Component {
     componentDidMount() {
@@ -11,49 +12,63 @@ class TaskPage extends Component {
     }
 
     render() {
-        const { task, loading, error, isHistoryVisible, toggleHistory } = this.props;
+        const { taskChangeData, loading, error, isHistoryVisible, toggleHistory } = this.props;
 
         if (loading) {
-            return <div>Loading...</div>;
+            return (
+                <div className="text-center mt-5">
+                    <Spinner color="primary" />
+                </div>
+            );
         }
 
         if (error) {
-            return <div>Error: {error}</div>;
+            return <div className="text-center mt-5 text-danger">Error: {error}</div>;
         }
 
-        if (!task) {
+        if (!taskChangeData) {
             return null;
         }
 
         return (
-            <Container className="mt-5">
-                <Row>
-                    <Col md={8}>
-                        <Card className="task-card">
-                            <CardTitle className="d-flex align-items-center justify-content-between">
-                                <h5>{task.name}</h5>
-                                <Button onClick={toggleHistory}>
-                                    {isHistoryVisible ? 'Hide History' : 'Show History'}
-                                </Button>
-                            </CardTitle>
+            <Container className="mt-5 d-flex justify-content-center">
+                <Row className="w-100">
+                    <Col md={{ size: 8, offset: 2 }}>
+                        <Card className="task-card shadow p-4">
                             <CardBody>
-                                <CardText>Description: {task.description || 'No description provided'}</CardText>
+                                <h3 className="task-title">{taskChangeData.task.name}</h3>
+                                <CardText className="text-muted">{taskChangeData.task.description || 'No description provided'}</CardText>
                                 <CardText>
-                                    <strong>Status:</strong> {selectTaskStatusText(task.status)}
+                                    <Badge color="primary" className="p-2">
+                                        Status: {selectTaskStatusText(taskChangeData.task.status)}
+                                    </Badge>
                                 </CardText>
-                                {task.user && task.user.userName && (
-                                    <CardText>
-                                        <strong>Creator:</strong> {task.user.userName}
+                                {taskChangeData.user && taskChangeData.user.avatarUrl && taskChangeData.user.userName && (
+                                    <CardText className="p-2 mb-2 card-text user-info">
+                                        <a href={`/profile/${taskChangeData.user.userName}`} className="d-flex align-items-center justify-content-start">
+                                            <img
+                                                src={taskChangeData.user.avatarUrl}
+                                                alt={taskChangeData.user.userName}
+                                                className="rounded-circle"
+                                                style={{ width: '30px', height: '30px', marginRight: '10px' }}
+                                            />
+                                            <span>{taskChangeData.user.userName}</span>
+                                        </a>
                                     </CardText>
                                 )}
-                                <Button>Edit Task</Button>
-                            </CardBody>
+                               </CardBody>
                         </Card>
 
-                        {isHistoryVisible && task.taskChanges && task.taskChanges.length > 0 && (
-                            <div className="task-history mt-4">
-                                <h5>History of Changes</h5>
-                                <TaskChangesTimeline taskChanges={task.taskChanges} />
+                        <div className="text-center mt-3">
+                            <Button color="light" className="text-secondary" onClick={toggleHistory}>
+                                {isHistoryVisible ? 'Hide History' : 'Show History'}
+                            </Button>
+                        </div>
+
+                        {isHistoryVisible && taskChangeData.task.taskChanges && taskChangeData.task.taskChanges.length > 0 && (
+                            <div className="task-history mt-4 p-3 shadow rounded">
+                                <h5 className="mb-3">History of Changes</h5>
+                                <TaskChangesTimeline taskChanges={taskChangeData.task.taskChanges} />
                             </div>
                         )}
                     </Col>
@@ -64,7 +79,7 @@ class TaskPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    task: state.task.taskChanges,
+    taskChangeData: state.task.taskChanges,
     loading: state.task.loading,
     error: state.task.error,
     isHistoryVisible: state.task.isHistoryVisible,
