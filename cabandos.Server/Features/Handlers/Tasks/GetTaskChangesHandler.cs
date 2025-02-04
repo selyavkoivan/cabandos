@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cabandos.Server.Features.Handlers.Tasks;
 
-public class GetTaskChangesHandler : IRequestHandler<GetTaskChangesQuery, object>
+public class GetTaskChangesHandler : IRequestHandler<GetTaskChangesQuery, Domain.Entities.Task>
 {
     private ApplicationContext _context;
 
@@ -14,11 +14,11 @@ public class GetTaskChangesHandler : IRequestHandler<GetTaskChangesQuery, object
         _context = context;
     }
 
-    public async Task<object> Handle(GetTaskChangesQuery request, CancellationToken cancellationToken)
+    public async Task<Domain.Entities.Task> Handle(GetTaskChangesQuery request, CancellationToken cancellationToken)
     {
         var taskId = Guid.Parse(request.TaskId);
 
-        var task = await _context.Tasks.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == taskId);
+        var task = await _context.Tasks.FindAsync(taskId).AsTask();
 
         task.TaskChanges = await _context.TaskChanges
             .Include(tc => tc.User)
@@ -29,11 +29,11 @@ public class GetTaskChangesHandler : IRequestHandler<GetTaskChangesQuery, object
             .Select(tc => (TaskChange)tc.Clone())
             .ToListAsync(cancellationToken);
 
-        return new { task, task.User};
+        return task;
     }
 }
 
-public class GetTaskChangesQuery : IRequest<object>
+public class GetTaskChangesQuery : IRequest<Domain.Entities.Task>
 {
     public string TaskId { get; set; }
 

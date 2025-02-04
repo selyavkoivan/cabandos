@@ -6,13 +6,9 @@ import taskStatusMap from "../../../assets/taskStatus.json";
 
 export const fetchTaskChangesAsync = createAsyncThunk(
     'task/fetchTaskChanges',
-    async (taskId, { rejectWithValue }) => {
-        try {
-            const data = await taskApi.fetchTaskChanges(taskId);
-            return data;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
+    async (taskId) => {
+        const data = await taskApi.fetchTaskChanges(taskId);
+        return data;
     }
 );
 
@@ -55,10 +51,7 @@ const initialState = {
     addingTaskStatus: false,
     allowedMoves,
     taskStatusMap,
-    taskChanges: null, 
-    loading: false,  
-    error: null,
-    isHistoryVisible: false,
+    taskChanges: [], 
 };
 
 const taskSlice = createSlice({
@@ -70,10 +63,7 @@ const taskSlice = createSlice({
         },
         setTaskChanges: (state, action) => {
             state.taskChanges = action.payload; 
-        },
-        toggleHistory: (state) => {
-            state.isHistoryVisible = !state.isHistoryVisible;
-        },
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -111,21 +101,12 @@ const taskSlice = createSlice({
                     tasks.splice(index, 1);
                 }
             })
-            .addCase(fetchTaskChangesAsync.pending, (state) => {
-                state.loading = true;  
-                state.error = null;    
-            })
             .addCase(fetchTaskChangesAsync.fulfilled, (state, action) => {
-                state.loading = false;         
-                state.taskChanges = action.payload; 
-            })
-            .addCase(fetchTaskChangesAsync.rejected, (state, action) => {
-                state.loading = false;         
-                state.error = action.payload; 
-            });;
+                state.taskChanges = action.payload;
+            });
     },
 });
 
-export const { setTasksGroup, setTaskChanges, toggleHistory } = taskSlice.actions;
+export const { setTasksGroup, setTaskChanges } = taskSlice.actions;
 
 export default taskSlice.reducer;
