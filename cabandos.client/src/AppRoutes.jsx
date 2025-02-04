@@ -43,7 +43,7 @@ const AppRoutes = [
         element: <Profile />
     },
     {
-        path: '/task/*',
+        path: 'task/*',
         element: <TaskPage />
     },
     {

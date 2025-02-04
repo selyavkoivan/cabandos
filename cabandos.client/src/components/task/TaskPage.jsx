@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Card, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import { connect } from 'react-redux';
-import TaskChangesTimeline from './TaskChange'; 
-import { fetchTaskChangesAsync } from '../../redux/slice/task/taskSlice';
-import { selectTaskStatusText } from '../../redux/slice/task/taskSlice';
+import TaskChangesTimeline from './TaskChangesTimeline';
+import { fetchTaskChangesAsync, selectTaskStatusText } from '../../redux/slice/task/taskSlice';
 
 class TaskPage extends Component {
     constructor(props) {
@@ -59,7 +58,7 @@ class TaskPage extends Component {
                                         <strong>Creator:</strong> {task.user.userName}
                                     </CardText>
                                 )}
-                                <Button>Edit Task</Button> 
+                                <Button>Edit Task</Button>
                             </CardBody>
                         </Card>
 
