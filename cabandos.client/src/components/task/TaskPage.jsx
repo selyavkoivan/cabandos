@@ -2,28 +2,16 @@ import React, { Component } from 'react';
 import { Container, Row, Col, Card, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import TaskChangesTimeline from './TaskChangesTimeline';
-import { fetchTaskChangesAsync, selectTaskStatusText } from '../../redux/slice/task/taskSlice';
+import { fetchTaskChangesAsync, selectTaskStatusText, toggleHistory } from '../../redux/slice/task/taskSlice';
 
 class TaskPage extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isHistoryVisible: false,
-        };
-    }
-
     componentDidMount() {
         const taskId = window.location.pathname.split('/').pop();
         this.props.fetchTaskChangesAsync(taskId);
     }
 
-    toggleHistory = () => {
-        this.setState((prevState) => ({ isHistoryVisible: !prevState.isHistoryVisible }));
-    };
-
     render() {
-        const { task, loading, error } = this.props;
-        const { isHistoryVisible } = this.state;
+        const { task, loading, error, isHistoryVisible, toggleHistory } = this.props;
 
         if (loading) {
             return <div>Loading...</div>;
@@ -44,7 +32,7 @@ class TaskPage extends Component {
                         <Card className="task-card">
                             <CardTitle className="d-flex align-items-center justify-content-between">
                                 <h5>{task.name}</h5>
-                                <Button onClick={this.toggleHistory}>
+                                <Button onClick={toggleHistory}>
                                     {isHistoryVisible ? 'Hide History' : 'Show History'}
                                 </Button>
                             </CardTitle>
@@ -79,10 +67,12 @@ const mapStateToProps = (state) => ({
     task: state.task.taskChanges,
     loading: state.task.loading,
     error: state.task.error,
+    isHistoryVisible: state.task.isHistoryVisible,
 });
 
 const mapDispatchToProps = {
     fetchTaskChangesAsync,
+    toggleHistory,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TaskPage);

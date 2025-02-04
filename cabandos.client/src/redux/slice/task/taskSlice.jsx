@@ -58,6 +58,7 @@ const initialState = {
     taskChanges: null, 
     loading: false,  
     error: null,
+    isHistoryVisible: false,
 };
 
 const taskSlice = createSlice({
@@ -69,7 +70,10 @@ const taskSlice = createSlice({
         },
         setTaskChanges: (state, action) => {
             state.taskChanges = action.payload; 
-        }
+        },
+        toggleHistory: (state) => {
+            state.isHistoryVisible = !state.isHistoryVisible;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -122,6 +126,6 @@ const taskSlice = createSlice({
     },
 });
 
-export const { setTasksGroup, setTaskChanges } = taskSlice.actions;
+export const { setTasksGroup, setTaskChanges, toggleHistory } = taskSlice.actions;
 
 export default taskSlice.reducer;
