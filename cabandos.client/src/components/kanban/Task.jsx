@@ -2,6 +2,7 @@
 import { Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import { AiOutlineClose } from "react-icons/ai";
 import { selectTaskStatusText } from '../../redux/slice/task/taskSlice';
+import { Link } from 'react-router-dom';
 import "../../assets/styles/Board.css";
 
 class Task extends Component {
@@ -33,7 +34,17 @@ class Task extends Component {
                     onDragStart={!isFreezed && this.handleDragStart}
                     tag="h5"
                 >
-                    <span style={{ flex: 1, textAlign: 'center' }}>{task.name}</span>
+                    <Link
+                        to={`/task/${task.id}`}
+                        style={{
+                            flex: 1,
+                            textAlign: 'center',
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}
+                    >
+                        {task.name}
+                    </Link>
                     {!isFreezed && (
                         <AiOutlineClose
                             className="ai-outline-close"

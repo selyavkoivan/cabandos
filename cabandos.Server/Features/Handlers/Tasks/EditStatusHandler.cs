@@ -30,7 +30,7 @@ public class EditStatusHandler : IRequestHandler<EditStatusCommand>
         }
 
         task.Status = request.TaskStatus;
-        var changeType = "StatusChange";
+        var changeType = "Status Change";
 
         var previousChange = await _context.TaskChanges
         .Where(tc => tc.TaskId == task.Id && tc.ChangeType == changeType)
