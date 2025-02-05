@@ -49,8 +49,9 @@ const taskChangesSlice = createSlice({
                 changes.forEach(change => {
                     const currentChangeTime = new Date(change.changedAt);
                     const history = [
-                        change.previousChange ? change.previousChange?.newValue : 'N/A',
-                        change.newValue,
+                        change.previousChange ? change.previousChange?.newValue : 'No Data',
+                        change.newValue || 'No Data'
+
                     ].filter(Boolean);
 
                     if (!currentGroup) {
@@ -64,7 +65,7 @@ const taskChangesSlice = createSlice({
                     } else {
                         const timeDiff = moment(currentChangeTime).diff(moment(currentGroup.endTime), 'minutes');
                         if (timeDiff <= 60) {
-                            currentGroup.history.push(change.newValue);
+                            currentGroup.history.push(change.newValue || 'No Data');
                             currentGroup.endTime = moment(currentChangeTime).toDate();
                             currentGroup.changes.push(change);
                         } else {

@@ -52,6 +52,21 @@ export const taskApi = {
         return;
     },
 
+    async editTask(task) {
+        const response = await fetch('/api/task/EditTask', {
+            method: 'POST',
+            body: JSON.stringify(task),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to edit task');
+        }
+        return;
+    },
+
     async fetchTaskChanges(taskId) {
         const response = await fetch(`/api/task/GetTaskChanges/${taskId}`);
         if (!response.ok) {

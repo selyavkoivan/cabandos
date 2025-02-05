@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { taskApi } from './taskApi';
-
 import allowedMoves from '../../../assets/allowedMoves.json';
 import taskStatusMap from "../../../assets/taskStatus.json";
 
@@ -15,6 +14,25 @@ export const fetchTaskChangesAsync = createAsyncThunk(
         }
     }
 );
+
+export const editTaskAsync = createAsyncThunk(
+    'task/editTask',
+    async (updatedTaskData, { rejectWithValue }) => {
+        try {
+            const filteredTaskData = {
+                id: updatedTaskData.id,
+                name: updatedTaskData.name,
+                description: updatedTaskData.description
+            };
+
+            await taskApi.editTask(filteredTaskData);
+            return updatedTaskData;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 
 export const fetchTasksByStatusAsync = createAsyncThunk(
     'task/fetchTasksByStatus',
@@ -55,10 +73,12 @@ const initialState = {
     addingTaskStatus: false,
     allowedMoves,
     taskStatusMap,
-    taskChanges: null, 
-    loading: false,  
+    taskChanges: null,
+    loading: false,
     error: null,
     isHistoryVisible: false,
+    isEditing: false,
+    editingTask: null,
 };
 
 const taskSlice = createSlice({
@@ -69,10 +89,17 @@ const taskSlice = createSlice({
             state.tasksGroup = action.payload;
         },
         setTaskChanges: (state, action) => {
-            state.taskChanges = action.payload; 
+            state.taskChanges = action.payload;
         },
         toggleHistory: (state) => {
             state.isHistoryVisible = !state.isHistoryVisible;
+        },
+        toggleEditing: (state) => {
+            state.isEditing = !state.isEditing;
+            state.isHistoryVisible = false;
+        },
+        setEditingTask: (state, action) => {
+            state.editingTask = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -112,20 +139,24 @@ const taskSlice = createSlice({
                 }
             })
             .addCase(fetchTaskChangesAsync.pending, (state) => {
-                state.loading = true;  
-                state.error = null;    
+                state.loading = true;
+                state.error = null;
             })
             .addCase(fetchTaskChangesAsync.fulfilled, (state, action) => {
-                state.loading = false;         
-                state.taskChanges = action.payload; 
+                state.loading = false;
+                state.taskChanges = action.payload;
             })
             .addCase(fetchTaskChangesAsync.rejected, (state, action) => {
-                state.loading = false;         
-                state.error = action.payload; 
-            });;
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(editTaskAsync.fulfilled, (state, action) => {
+                state.isEditing = false;
+                window.location.reload()
+            });
     },
 });
 
-export const { setTasksGroup, setTaskChanges, toggleHistory } = taskSlice.actions;
+export const { setTasksGroup, setTaskChanges, toggleHistory, toggleEditing, setEditingTask } = taskSlice.actions;
 
 export default taskSlice.reducer;
