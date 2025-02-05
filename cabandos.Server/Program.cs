@@ -19,7 +19,10 @@ builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection(
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 
-builder.Services.AddScoped<EmailConfirmedFilter>(); 
+builder.Services.AddScoped<EmailConfirmedFilter>();
+
+builder.Services.AddHttpContextAccessor(); 
+builder.Services.AddScoped<IUserService, UserService>(); 
 
 builder.Services.AddControllers(options =>
 {
