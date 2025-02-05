@@ -32,8 +32,8 @@ const ChangeInfoModal = () => {
                             <CardBody className="p-0">
                                 <CardTitle tag="h6">Change {index + 1}</CardTitle>
                                 <CardText><span className="fw-bold">Type:</span> {change.changeType}</CardText>
-                                <CardText><span className="fw-bold">Old:</span> {change.previousChange?.newValue || "N/A"}</CardText>
-                                <CardText><span className="fw-bold">New:</span> {change.newValue}</CardText>
+                                <CardText><span className="fw-bold">Old:</span> {change.previousChange?.newValue || "No Data"}</CardText>
+                                <CardText><span className="fw-bold">New:</span> {change.newValue || 'No Data'}</CardText>
                                 <hr />
                                 <CardText>
                                     <small>{moment(change.changedAt).format("HH:mm:ss")}</small>
