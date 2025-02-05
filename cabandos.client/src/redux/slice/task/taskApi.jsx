@@ -51,4 +51,12 @@ export const taskApi = {
         }
         return;
     },
+
+    async fetchTaskChanges(taskId) {
+        const response = await fetch(`/api/task/GetTaskChanges/${taskId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch task changes');
+        }
+        return response.json();
+    },
 };

@@ -14,7 +14,7 @@ public class Task
         Status = taskDTO.Status;
     }
 
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
 
     [StringLength(30, ErrorMessage = "Task name cannot exceed 30 characters.")]
     public string Name { get; set; }
@@ -27,4 +27,7 @@ public class Task
 
     [JsonIgnore]
     public User? User { get; set; }
+
+
+    public List<TaskChange>? TaskChanges { get; set; } = [];
 }
