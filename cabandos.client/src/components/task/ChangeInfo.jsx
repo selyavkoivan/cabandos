@@ -1,10 +1,18 @@
-﻿import React, { useState } from "react";
+﻿import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleModal, setChanges } from "../../redux/slice/task/taskChangesSlice";
 import ChangeInfoModal from "./ChangeInfoModal";
 
 const ChangeInfo = ({ history, timeRange, changeCount, changes }) => {
-    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const dispatch = useDispatch();
+    const modalIsOpen = useSelector(state => state.taskChanges.isModalOpen);
 
-    const toggleModal = () => setModalIsOpen(!modalIsOpen);
+    const toggleModalHandler = () => {
+        if (!modalIsOpen) {
+            dispatch(setChanges(changes));
+        }
+        dispatch(toggleModal());
+    };
 
     const displayHistory =
         history.length > 2
@@ -13,7 +21,7 @@ const ChangeInfo = ({ history, timeRange, changeCount, changes }) => {
 
     return (
         <div
-            onClick={toggleModal}
+            onClick={toggleModalHandler}
             style={{
                 cursor: "pointer",
                 flexDirection: "column",
@@ -28,7 +36,7 @@ const ChangeInfo = ({ history, timeRange, changeCount, changes }) => {
             <strong>Changes: {changeCount}</strong>
             <div>{displayHistory || "..."}</div>
             <div><small>{timeRange}</small></div>
-            <ChangeInfoModal isOpen={modalIsOpen} toggle={toggleModal} changes={changes} />
+            <ChangeInfoModal isOpen={modalIsOpen} />
         </div>
     );
 };
