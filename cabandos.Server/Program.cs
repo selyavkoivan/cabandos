@@ -16,10 +16,15 @@ var emailConfig = builder.Configuration
     .Get<EmailConfiguration>();
 
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 
-builder.Services.AddScoped<EmailConfirmedFilter>(); 
+builder.Services.AddScoped<EmailConfirmedFilter>();
+
+builder.Services.AddHttpContextAccessor(); 
+builder.Services.AddScoped<IUserService, UserService>(); 
 
 builder.Services.AddControllers(options =>
 {

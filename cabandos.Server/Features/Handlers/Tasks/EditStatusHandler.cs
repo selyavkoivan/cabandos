@@ -28,27 +28,7 @@ public class EditStatusHandler : IRequestHandler<EditStatusCommand>
         {
             throw new Exception("Task not found.");
         }
-
         task.Status = request.TaskStatus;
-        var changeType = "Status Change";
-
-        var previousChange = await _context.TaskChanges
-        .Where(tc => tc.TaskId == task.Id && tc.ChangeType == changeType)
-        .OrderByDescending(tc => tc.ChangedAt)
-        .FirstOrDefaultAsync(cancellationToken);
-
-        var me = await _mediator.Send(new GetMeQuery(request.User)) as User;
-
-        var taskChange = new TaskChange(
-            taskId: task.Id,
-            changeType: changeType,
-            changedAt: DateTime.UtcNow,
-            changedByUserId: me?.Id,
-            newValue: task.Status.ToString(),
-            previousChangeId: previousChange?.Id
-        );
-
-        _context.TaskChanges.Add(taskChange);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
