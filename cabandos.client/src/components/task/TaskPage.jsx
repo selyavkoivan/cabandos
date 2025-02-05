@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, CardBody, CardTitle, CardText, Button, Spinner, Badge } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, CardText, Button, Spinner, Badge } from 'reactstrap';
 import { connect } from 'react-redux';
 import TaskChangesTimeline from './TaskChangesTimeline';
-import { fetchTaskChangesAsync, selectTaskStatusText, toggleHistory } from '../../redux/slice/task/taskSlice';
+import { fetchTaskChangesAsync, selectTaskStatusText, toggleHistory, toggleEditing, editTaskAsync } from '../../redux/slice/task/taskSlice';
+import { FaEdit } from 'react-icons/fa';
+import TaskEditForm from './TaskEditForm';
 import '../../assets/styles/TaskChange.css';
 
 class TaskPage extends Component {
@@ -11,24 +13,16 @@ class TaskPage extends Component {
         this.props.fetchTaskChangesAsync(taskId);
     }
 
+    handleSave = (updatedTaskData) => {
+        this.props.editTaskAsync({ ...this.props.taskChangeData.task, ...updatedTaskData });
+    };
+
     render() {
-        const { taskChangeData, loading, error, isHistoryVisible, toggleHistory } = this.props;
+        const { isEditing, taskChangeData, loading, error, isHistoryVisible, toggleHistory } = this.props;
 
-        if (loading) {
-            return (
-                <div className="text-center mt-5">
-                    <Spinner color="primary" />
-                </div>
-            );
-        }
-
-        if (error) {
-            return <div className="text-center mt-5 text-danger">Error: {error}</div>;
-        }
-
-        if (!taskChangeData) {
-            return null;
-        }
+        if (loading) return <div className="text-center mt-5">Loading...</div>;
+        if (error) return <div className="text-center mt-5 text-danger">Error: {error}</div>;
+        if (!taskChangeData) return null;
 
         return (
             <Container className="mt-5 d-flex justify-content-center">
@@ -36,16 +30,31 @@ class TaskPage extends Component {
                     <Col md={{ size: 8, offset: 2 }}>
                         <Card className="task-card shadow p-4">
                             <CardBody>
-                                <h3 className="task-title">{taskChangeData.task.name}</h3>
+                                <div className="d-flex align-items-center justify-content-between">
+                                    <h3 className="task-title m-0">{taskChangeData.task.name}</h3>
+                                    {!isEditing &&
+                                        <Button
+                                            color="link"
+                                            className="p-0 text-primary w-auto "
+                                            onClick={this.props.toggleEditing}
+                                            style={{ fontSize: '1.2rem' }}
+                                        >
+                                            <FaEdit />
+                                        </Button>
+                                    }
+                                </div>
+
                                 <CardText className="text-muted">{taskChangeData.task.description || 'No description provided'}</CardText>
+
                                 <CardText>
                                     <Badge color="primary" className="p-2">
                                         Status: {selectTaskStatusText(taskChangeData.task.status)}
                                     </Badge>
                                 </CardText>
+
                                 {taskChangeData.user && taskChangeData.user.avatarUrl && taskChangeData.user.userName && (
                                     <CardText className="p-2 mb-2 card-text user-info">
-                                        <a href={`/profile/${taskChangeData.user.userName}`} className="d-flex align-items-center justify-content-start">
+                                        <a href={`/profile/${taskChangeData.user.userName}`} className="d-flex align-items-center">
                                             <img
                                                 src={taskChangeData.user.avatarUrl}
                                                 alt={taskChangeData.user.userName}
@@ -56,17 +65,25 @@ class TaskPage extends Component {
                                         </a>
                                     </CardText>
                                 )}
-                               </CardBody>
+                            </CardBody>
                         </Card>
 
-                        <div className="text-center mt-3">
-                            <Button color="light" className="text-secondary" onClick={toggleHistory}>
-                                {isHistoryVisible ? 'Hide History' : 'Show History'}
-                            </Button>
-                        </div>
+                        {isEditing ?
+                            <TaskEditForm
+                                task={taskChangeData.task}
+                                onSave={this.handleSave}
+                                onCancel={this.props.toggleEditing}
+                            />
+                            :
+                            <div className="text-center mt-3">
+                                <Button color="light" className="text-secondary" onClick={toggleHistory}>
+                                    {isHistoryVisible ? 'Hide History' : 'Show History'}
+                                </Button>
+                            </div>
+                        }
 
-                        {isHistoryVisible && taskChangeData.task.taskChanges && taskChangeData.task.taskChanges.length > 0 && (
-                            <div className="task-history mt-4 p-3 shadow rounded">
+                        {isHistoryVisible && taskChangeData.task.taskChanges?.length > 0 && (
+                            <div className="task-history mt-4 mb-5 p-3 shadow rounded">
                                 <h5 className="mb-3">History of Changes</h5>
                                 <TaskChangesTimeline taskChanges={taskChangeData.task.taskChanges} />
                             </div>
@@ -79,6 +96,7 @@ class TaskPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
+    isEditing: state.task.isEditing,
     taskChangeData: state.task.taskChanges,
     loading: state.task.loading,
     error: state.task.error,
@@ -88,6 +106,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
     fetchTaskChangesAsync,
     toggleHistory,
+    toggleEditing,
+    editTaskAsync,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TaskPage);
