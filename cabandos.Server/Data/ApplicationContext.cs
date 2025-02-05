@@ -1,8 +1,9 @@
 ﻿using cabandos.Server.Domain.Entities;
+using cabandos.Server.Features.Configurations;
 using cabandos.Server.Features.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Options;
 using Task = cabandos.Server.Domain.Entities.Task;
 
 
@@ -10,6 +11,7 @@ namespace cabandos.Server.Data;
 public class ApplicationContext : IdentityDbContext<User>
 {
     private readonly IUserService _userService;
+    private readonly AppSettings _appSettings;
 
 
     public override DbSet<User> Users => Set<User>();
@@ -17,10 +19,11 @@ public class ApplicationContext : IdentityDbContext<User>
     public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
     public DbSet<TaskChange> TaskChanges => Set<TaskChange>();
 
-    public ApplicationContext(DbContextOptions<ApplicationContext> options, IUserService userService)
+    public ApplicationContext(DbContextOptions<ApplicationContext> options, IUserService userService, IOptions<AppSettings> appSettings)
      : base(options)
     {
         _userService = userService;
+        _appSettings = appSettings.Value;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,7 +43,7 @@ public class ApplicationContext : IdentityDbContext<User>
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.AvatarUrl)
-                  .HasDefaultValue("https://res.cloudinary.com/fanfictionteamoff/image/upload/v1669894168/ekrama/%D0%B8%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5_2022-12-01_142927792_vx67r0.png");
+                  .HasDefaultValue(_appSettings.DefaultAvatarUrl);
         });
     }
 
