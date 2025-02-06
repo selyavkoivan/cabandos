@@ -37,13 +37,25 @@ class TaskChangesTimeline extends Component {
                     if (item.original_start_time === item.original_end_time) {
                         timeRange = moment(item.original_start_time).format("HH:mm");
                     }
+
+
+                    const minDurationToShow = item.mainDuration + item.additionalDuration;
+                    const mainBlockWidth = (item.mainDuration / minDurationToShow) * 100;
+                    const additionalBlockWidth = (item.additionalDuration / minDurationToShow) * 100; 
+
                     return (
-                        <div key={key} {...restProps} style={style}>
+                        <div key={key} {...restProps} style={{
+                            ...style, 
+                            background: `linear-gradient(to right, #3498db ${mainBlockWidth}%, rgba(255, 255, 255, 0) ${mainBlockWidth}% ${mainBlockWidth + additionalBlockWidth}%)`,
+                        }}
+ >
                             <ChangeInfo
                                 history={item.history}
                                 timeRange={timeRange}
                                 changeCount={item.changeCount}
                                 changes={item.changes}
+                                mainDuration={item.mainDuration}
+                                additionalDuration={item.additionalDuration}
                             />
                         </div>
                     );

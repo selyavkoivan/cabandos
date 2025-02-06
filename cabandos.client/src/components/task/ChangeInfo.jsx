@@ -31,6 +31,7 @@ const ChangeInfo = ({ history, timeRange, changeCount, changes }) => {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
+                color: "black",
             }}
         >
             <strong>Changes: {changeCount}</strong>

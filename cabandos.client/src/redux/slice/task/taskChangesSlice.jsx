@@ -88,10 +88,14 @@ const taskChangesSlice = createSlice({
 
             const items = mergedChanges.map((change, index) => {
                 const minDuration = 60 * 60 * 1000;
-                const startTime = moment(change.startTime).valueOf() - minDuration / 2;
+                const startTime = moment(change.startTime).valueOf();
                 let endTime = moment(change.endTime).valueOf();
+                let additionalDuration = 0
+                const mainDuration = endTime - startTime;
 
                 if (endTime - startTime < minDuration) {
+                    additionalDuration = minDuration - mainDuration
+
                     endTime = startTime + minDuration;
                 }
 
@@ -107,6 +111,8 @@ const taskChangesSlice = createSlice({
                     history: change.history,
                     changes: change.changes,
                     changeCount: change.history.length - 1,
+                    mainDuration: mainDuration,
+                    additionalDuration: additionalDuration,
                 };
             });
 
