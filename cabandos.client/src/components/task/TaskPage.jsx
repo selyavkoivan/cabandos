@@ -68,19 +68,19 @@ class TaskPage extends Component {
                             </CardBody>
                         </Card>
 
-                        {isLogin && isEditing ?
+                        {isLogin && isEditing ? (
                             <TaskEditForm
                                 task={taskChangeData.task}
                                 onSave={this.handleSave}
                                 onCancel={this.props.toggleEditing}
                             />
-                            :
+                        ) : taskChangeData.task.taskChanges?.length > 0 && (
                             <div className="text-center mt-3">
                                 <Button color="light" className="text-secondary" onClick={toggleHistory}>
                                     {isHistoryVisible ? 'Hide History' : 'Show History'}
                                 </Button>
                             </div>
-                        }
+                        )}
 
                         {isHistoryVisible && taskChangeData.task.taskChanges?.length > 0 && (
                             <div className="task-history mt-4 mb-5 p-3 shadow rounded">
@@ -88,6 +88,7 @@ class TaskPage extends Component {
                                 <TaskChangesTimeline taskChanges={taskChangeData.task.taskChanges} />
                             </div>
                         )}
+
                     </Col>
                 </Row>
             </Container>
