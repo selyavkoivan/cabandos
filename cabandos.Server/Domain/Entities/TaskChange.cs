@@ -46,6 +46,8 @@ public class TaskChange: System.ICloneable
     public object Clone()
     {
         var clone = this.MemberwiseClone() as TaskChange;
+        
+        this.User?.Tasks?.Clear();
 
         clone.User = this.User?.Clone() as User;
         clone.PreviousChange = this.PreviousChange?.Clone() as TaskChange;
