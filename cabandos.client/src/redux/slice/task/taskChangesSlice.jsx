@@ -49,7 +49,7 @@ const taskChangesSlice = createSlice({
                 changes.forEach(change => {
                     const currentChangeTime = new Date(change.changedAt);
                     const history = [
-                        change.previousChange ? change.previousChange?.newValue : 'No Data',
+                        change.previousChange?.newValue || 'No Data',
                         change.newValue || 'No Data'
 
                     ].filter(Boolean);
