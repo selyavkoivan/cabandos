@@ -45,7 +45,7 @@ class BoardColumn extends Component {
     };
 
     render() {
-        const { tasksItem } = this.props;
+        const { tasksItem, isLogin } = this.props;
         const { isAdding } = this.state;
 
         if (!tasksItem) {
@@ -55,12 +55,13 @@ class BoardColumn extends Component {
         return (
             <Card
                 style={{ height: '100%' }}
-                onDrop={this.handleDrop}
-                onDragOver={this.handleDragOver}
+                onDrop={isLogin ? this.handleDrop : undefined}
+                onDragOver={isLogin ? this.handleDragOver : undefined}
+
             >
                 <CardBody className="m-0 p-0">
                     <CardTitle className="h1 text-center">{selectTaskStatusText(tasksItem.status)}</CardTitle>
-                    {tasksItem.status === 0 && (isAdding ? (
+                    {isLogin && tasksItem.status === 0 && (isAdding ? (
                         <AddTask onAddTask={this.handleAddTask} />
                     ) : (
                             <Button onClick={this.handleToggleAdd} className="w-auto p-2">
@@ -75,6 +76,7 @@ class BoardColumn extends Component {
                                 task={task}
                                 onDeleteTask={this.handleDeleteTask}
                                 onMoveTask={this.handleMoveTask}
+                                isFreezed={!isLogin}
                             />
                         ))
                     ) : (
@@ -89,6 +91,7 @@ class BoardColumn extends Component {
 const mapStateToProps = (state) => ({
     isAdding: state.task.addingTaskStatus,
     allowedMoves: state.task.allowedMoves,
+    isLogin: state.auth.isLogin,
 });
 
 

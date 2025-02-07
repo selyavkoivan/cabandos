@@ -95,7 +95,7 @@ public class ApplicationContext : IdentityDbContext<User>
                             TaskId = task.Id,
                             ChangeType = changeType,
                             PreviousChangeId = previousChangeId, 
-                            NewValue = newValue?.ToString(), 
+                            NewValue = newValue?.ConvertValueToString(), 
                             ChangedAt = changedAt,
                             UserId = _userService.GetCurrentUserId()
                         };

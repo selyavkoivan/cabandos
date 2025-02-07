@@ -18,7 +18,7 @@ class TaskPage extends Component {
     };
 
     render() {
-        const { isEditing, taskChangeData, loading, error, isHistoryVisible, toggleHistory } = this.props;
+        const { isEditing, taskChangeData, loading, error, isHistoryVisible, toggleHistory, isLogin } = this.props;
 
         if (loading) return <div className="text-center mt-5">Loading...</div>;
         if (error) return <div className="text-center mt-5 text-danger">Error: {error}</div>;
@@ -32,7 +32,7 @@ class TaskPage extends Component {
                             <CardBody>
                                 <div className="d-flex align-items-center justify-content-between">
                                     <h3 className="task-title m-0">{taskChangeData.task.name}</h3>
-                                    {!isEditing &&
+                                    {isLogin && !isEditing &&
                                         <Button
                                             color="link"
                                             className="p-0 text-primary w-auto "
@@ -68,19 +68,19 @@ class TaskPage extends Component {
                             </CardBody>
                         </Card>
 
-                        {isEditing ?
+                        {isLogin && isEditing ? (
                             <TaskEditForm
                                 task={taskChangeData.task}
                                 onSave={this.handleSave}
                                 onCancel={this.props.toggleEditing}
                             />
-                            :
+                        ) : taskChangeData.task.taskChanges?.length > 0 && (
                             <div className="text-center mt-3">
                                 <Button color="light" className="text-secondary" onClick={toggleHistory}>
                                     {isHistoryVisible ? 'Hide History' : 'Show History'}
                                 </Button>
                             </div>
-                        }
+                        )}
 
                         {isHistoryVisible && taskChangeData.task.taskChanges?.length > 0 && (
                             <div className="task-history mt-4 mb-5 p-3 shadow rounded">
@@ -88,6 +88,7 @@ class TaskPage extends Component {
                                 <TaskChangesTimeline taskChanges={taskChangeData.task.taskChanges} />
                             </div>
                         )}
+
                     </Col>
                 </Row>
             </Container>
@@ -101,6 +102,7 @@ const mapStateToProps = (state) => ({
     loading: state.task.loading,
     error: state.task.error,
     isHistoryVisible: state.task.isHistoryVisible,
+    isLogin: state.auth.isLogin,
 });
 
 const mapDispatchToProps = {

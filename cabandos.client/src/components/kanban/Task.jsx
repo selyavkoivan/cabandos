@@ -30,8 +30,7 @@ class Task extends Component {
                         cursor: 'grab',
                         padding: '0 10px',
                     }}
-                    draggable
-                    onDragStart={!isFreezed && this.handleDragStart}
+                    onDragStart={!isFreezed ? this.handleDragStart : undefined}
                     tag="h5"
                 >
                     <Link

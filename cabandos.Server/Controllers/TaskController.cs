@@ -3,6 +3,7 @@ using Task = cabandos.Server.Domain.Entities.Task;
 using MediatR;
 using cabandos.Server.Domain.DTO;
 using cabandos.Server.Features.Handlers.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace cabandos.Server.Controllers;
 
@@ -32,6 +33,7 @@ public class TaskController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPost("AddTask")]
     public async Task<IActionResult> AddTask([FromBody] TaskDTO taskDTO)
     {
@@ -39,6 +41,7 @@ public class TaskController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPost("DeleteTask")]
     public async Task<IActionResult> DeleteTask([FromBody] Task task)
     {
@@ -46,6 +49,7 @@ public class TaskController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpPost("EditTaskStatus")]
     public async Task<IActionResult> EditTaskStatus([FromBody] Task task)
     {
@@ -53,6 +57,7 @@ public class TaskController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpPost("EditTask")]
     public async Task<IActionResult> EditTask([FromBody] Task task)
     {
